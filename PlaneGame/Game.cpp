@@ -2,20 +2,20 @@
 #include <iostream>
 
 	
-const float PlayerSpeed = 100.f;
-const sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
+const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
-	: window_(sf::VideoMode(640, 480), "SFML Application")
-	, player_()
+	: window_(sf::VideoMode(640, 480), "World", sf::Style::Close)
+	, world_(window_)
+	, font_()
+	, statisticsText_()
+	, statisticsUpdateTime_()
+	, statisticsNumFrames_(0)
 {
-	if (!texture_.loadFromFile("Media/Textures/Eagle.png"))
-	{
-		std::cerr << "Error loading texture" << std::endl;
-		// handle error
-	}
-	player_.setTexture(texture_);
-	player_.setPosition(100.f, 100.f);
+	font_.loadFromFile("Media/Sansation.ttf");
+	statisticsText_.setFont(font_);
+	statisticsText_.setPosition(5.f, 5.f);
+	statisticsText_.setCharacterSize(10);
 }
 
 void Game::run()
@@ -24,14 +24,17 @@ void Game::run()
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	while (window_.isOpen())
 	{
-
-		timeSinceLastUpdate += clock.restart();
+		sf::Time elapsedTime = clock.restart();
+		timeSinceLastUpdate += elapsedTime;
 		while (timeSinceLastUpdate > TimePerFrame)
 		{
 			timeSinceLastUpdate -= TimePerFrame;
+
 			processEvents();
 			update(TimePerFrame);
 		}
+
+		updateStatistics(elapsedTime);
 		render();
 	}
 }
@@ -52,60 +55,39 @@ void Game::processEvents()
 		case sf::Event::Closed:
 			window_.close();
 			break;
-		default:
-			break;
 		}
 	}
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
+void Game::update(sf::Time elapsedTime)
 {
-	if (key == sf::Keyboard::W)
-	{
-		isMovingUp_ = isPressed;
-	}
-	else if (key == sf::Keyboard::S)
-	{
-		isMovingDown_ = isPressed;
-	}
-	else if (key == sf::Keyboard::A)
-	{
-		isMovingLeft_ = isPressed;
-	}
-	else if (key == sf::Keyboard::D)
-	{
-		isMovingRigh_ = isPressed;
-	}
-}
-
-void Game::update(sf::Time deltaTime)
-{
-	sf::Vector2f movement(0.f, 0.f);
-	if (isMovingUp_)
-	{
-		movement.y -= PlayerSpeed;
-	}
-	if (isMovingDown_)
-	{
-		movement.y += PlayerSpeed;
-	}
-	if (isMovingLeft_)
-	{
-		movement.x -= PlayerSpeed;
-	}
-	if (isMovingRigh_)
-	{
-		movement.x += PlayerSpeed;
-	}
-	if (movement != sf::Vector2f(0.f, 0.f))
-	{
-		player_.move(movement * deltaTime.asSeconds());
-	}
+	world_.update(elapsedTime);
 }
 
 void Game::render()
 {
 	window_.clear();
-	window_.draw(player_);
+	world_.draw();
+
+	window_.setView(window_.getDefaultView());
+	window_.draw(statisticsText_);
 	window_.display();
+}
+
+void Game::updateStatistics(sf::Time elapsedTime)
+{
+	statisticsUpdateTime_ += elapsedTime;
+	statisticsNumFrames_ += 1;
+	if (statisticsUpdateTime_ >= sf::seconds(1.0f))
+	{
+		statisticsText_.setString(
+			"Frames / Second = " + std::to_string(statisticsNumFrames_) + "\n" +
+			"Time / Update = " + std::to_string(statisticsUpdateTime_.asMicroseconds() / statisticsNumFrames_) + "us");
+		statisticsUpdateTime_ -= sf::seconds(1.0f);
+		statisticsNumFrames_ = 0;
+	}
+}
+
+void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
+{
 }
