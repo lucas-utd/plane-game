@@ -7,6 +7,7 @@ const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 Game::Game()
 	: window_(sf::VideoMode(640, 480), "World", sf::Style::Close)
 	, world_(window_)
+	, player_()
 	, font_()
 	, statisticsText_()
 	, statisticsUpdateTime_()
@@ -44,19 +45,15 @@ void Game::processEvents()
 	sf::Event event;
 	while (window_.pollEvent(event))
 	{
-		switch (event.type)
+		player_.handleEvent(event, world_.getCommandQueue());
+
+		if (event.type == sf::Event::Closed)
 		{
-		case sf::Event::KeyPressed:
-			handlePlayerInput(event.key.code, true);
-			break;
-		case sf::Event::KeyReleased:
-			handlePlayerInput(event.key.code, false);
-			break;
-		case sf::Event::Closed:
 			window_.close();
-			break;
 		}
 	}
+
+	player_.handleRealtimeInput(world_.getCommandQueue());
 }
 
 void Game::update(sf::Time elapsedTime)
@@ -88,6 +85,6 @@ void Game::updateStatistics(sf::Time elapsedTime)
 	}
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
-{
-}
+//void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
+//{
+//}

@@ -12,6 +12,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "World.h"
+#include "Player.h"
 
 
 class Game : private sf::NonCopyable
@@ -26,13 +27,14 @@ private:
 	void render();
 
 	void updateStatistics(sf::Time elapsedTime);
-	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	//void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 
 private:
 	static const sf::Time TimePerFrame;
 
 	sf::RenderWindow window_;
 	World world_;
+	Player player_;
 
 	sf::Font font_;
 	sf::Text statisticsText_;

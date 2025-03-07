@@ -17,6 +17,7 @@
 #include "Aircraft.h"
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
+#include "CommandQueue.h"
 
 
 class World : private sf::NonCopyable
@@ -26,10 +27,14 @@ public:
 	void update(sf::Time dt);
 	void draw();
 
+	CommandQueue& getCommandQueue();
+
 
 private:
 	void loadTextures();
 	void buildScene();
+	void adaptPlayerPosition();
+	void adaptPlayerVelocity();
 
 private:
 	enum Layer
@@ -47,6 +52,7 @@ private:
 
 	SceneNode sceneGraph_;
 	std::array<SceneNode*, LayerCount> sceneLayers_;
+	CommandQueue commandQueue_;
 
 	sf::FloatRect worldBounds_;
 	sf::Vector2f spawnPosition_;

@@ -3,7 +3,8 @@
 
 
 SceneNode::SceneNode()
-	: parent_(nullptr)
+	: children_()
+	, parent_(nullptr)
 {
 }
 
@@ -80,4 +81,24 @@ sf::Transform SceneNode::getWorldTransform() const
 	}
 
 	return transform;
+}
+
+void SceneNode::onCommand(const Command& command, sf::Time dt)
+{
+	// Command current node, if category matches
+	if (command.category & getCategory())
+	{
+		command.action(*this, dt);
+	}
+
+	// Command children
+	for (Ptr& child : children_)
+	{
+		child->onCommand(command, dt);
+	}
+}
+
+unsigned int SceneNode::getCategory() const
+{
+	return static_cast<unsigned int>(Category::Type::Scene);
 }

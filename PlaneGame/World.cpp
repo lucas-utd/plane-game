@@ -24,27 +24,32 @@ void World::update(sf::Time dt)
 {
 	// Scroll the world, reset player velocity
 	worldView_.move(0.f, scrollSpeed_ * dt.asSeconds());
+	playerAircraft_->setVelocity(0.f, 0.f);
 
-	// Move the player sidewards (plane)
-	sf::Vector2f position = playerAircraft_->getPosition();
-	sf::Vector2f velocity = playerAircraft_->getVelocity();
-
-	// If players touches borders, flip its direction
-	if (position.x <= worldBounds_.left + 150 ||
-		position.x >= worldBounds_.left + worldBounds_.width - 150.f)
+	// Forward commands to scene graph
+	while (!commandQueue_.isEmpty())
 	{
-		velocity.x = -velocity.x;
-		playerAircraft_->setVelocity(velocity);
+		sceneGraph_.onCommand(commandQueue_.pop(), dt);
 	}
+	// Adapt player velocity
+	adaptPlayerVelocity();
 
-	// Apply movements
+	// Update scene
 	sceneGraph_.update(dt);
+
+	// Adapt player position based on velocity
+	adaptPlayerPosition();
 }
 
 void World::draw()
 {
 	window_.setView(worldView_);
 	window_.draw(sceneGraph_);
+}
+
+CommandQueue& World::getCommandQueue()
+{
+	return commandQueue_;
 }
 
 void World::loadTextures()
@@ -79,15 +84,33 @@ void World::buildScene()
 	std::unique_ptr<Aircraft> leader = std::make_unique<Aircraft>(Aircraft::Type::Eagle, textures_);
 	playerAircraft_ = leader.get();
 	playerAircraft_->setPosition(spawnPosition_);
-	playerAircraft_->setVelocity(40.f, scrollSpeed_);
 	sceneLayers_[Air]->attachChild(std::move(leader));
+}
 
-	// Add two escorting aircrafts, placed relatively to the main plane
-	std::unique_ptr<Aircraft> leftEscort = std::make_unique<Aircraft>(Aircraft::Type::Raptor, textures_);
-	leftEscort->setPosition(-80.f, 50.f);
-	playerAircraft_->attachChild(std::move(leftEscort));
+void World::adaptPlayerPosition()
+{
+	// Keep player's position inside the screen bounds, at least borderDistance units from the border
+	sf::FloatRect viewBounds(worldView_.getCenter() - worldView_.getSize() / 2.f, worldView_.getSize());
+	const float borderDistance = 40.f;
 
-	std::unique_ptr<Aircraft> rightEscort = std::make_unique<Aircraft>(Aircraft::Type::Raptor, textures_);
-	rightEscort->setPosition(80.f, 50.f);
-	playerAircraft_->attachChild(std::move(rightEscort));
+	sf::Vector2f position = playerAircraft_->getPosition();
+	position.x = std::max(position.x, viewBounds.left + borderDistance);
+	position.x = std::min(position.x, viewBounds.left + viewBounds.width - borderDistance);
+	position.y = std::max(position.y, viewBounds.top + borderDistance);
+	position.y = std::min(position.y, viewBounds.top + viewBounds.height - borderDistance);
+	playerAircraft_->setPosition(position);
+}
+
+void World::adaptPlayerVelocity()
+{
+	sf::Vector2f velocity = playerAircraft_->getVelocity();
+
+	// If moving diagonally, reduce velocity (to have always same velocity)
+	if (velocity.x != 0.f && velocity.y != 0.f)
+	{
+		playerAircraft_->setVelocity(velocity / std::sqrt(2.f));
+	}
+
+	// Add scrolling velocity
+	playerAircraft_->accelerate(0.f, scrollSpeed_);
 }
