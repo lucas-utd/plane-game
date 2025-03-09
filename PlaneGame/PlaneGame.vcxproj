@@ -135,29 +135,47 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Aircraft.cpp" />
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="LoadingState.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="ParallelTask.cpp" />
+    <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="TitleState.cpp" />
+    <ClCompile Include="Utility.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aircraft.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Category.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="LoadingState.h" />
+    <ClInclude Include="MenuState.h" />
+    <ClInclude Include="ParallelTask.h" />
+    <ClInclude Include="PauseState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="ResourceIdentifiers.h" />
+    <ClInclude Include="StateStack.h" />
     <ClInclude Include="SceneNode.h" />
     <ClInclude Include="SpriteNode.h" />
-    <ClInclude Include="StringHelpers.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateIdentifiers.h" />
+    <ClInclude Include="TitleState.h" />
+    <ClInclude Include="Utility.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ResourceHolder.inl" />
-    <None Include="StringHelpers.inl" />
+    <None Include="Utility.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

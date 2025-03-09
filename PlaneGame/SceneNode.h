@@ -12,6 +12,7 @@ public:
 
 public:
 	SceneNode();
+
 	void attachChild(Ptr child);
 	Ptr detachChild(const SceneNode& node);
 
