@@ -5,9 +5,9 @@
 #include "StateStack.h"
 
 StateStack::StateStack(State::Context context)
-	: context_(context)
+	: stack_()
 	, pendingList_()
-	, stack_()
+	, context_(context)
 	, factories_()
 {
 }

@@ -6,6 +6,7 @@
 #include "PauseState.h"
 #include "StateIdentifiers.h"
 #include "Utility.h"
+#include "SettingsState.h"
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
@@ -23,6 +24,9 @@ Application::Application()
 
 	fonts_.load(Fonts::ID::Main, "Media/Sansation.ttf");
 	textures_.load(Textures::ID::TitleScreen, "Media/Textures/TitleScreen.png");
+	textures_.load(Textures::ID::ButtonNormal, "Media/Textures/ButtonNormal.png");
+	textures_.load(Textures::ID::ButtonSelected, "Media/Textures/ButtonSelected.png");
+	textures_.load(Textures::ID::ButtonPressed, "Media/Textures/ButtonPressed.png");
 
 	statisticsText_.setFont(fonts_.get(Fonts::ID::Main));
 	statisticsText_.setPosition(5.f, 5.f);
@@ -109,4 +113,5 @@ void Application::registerStates()
 	stateStack_.registerState<MenuState>(States::ID::Menu);
 	stateStack_.registerState<GameState>(States::ID::Game);
 	stateStack_.registerState<PauseState>(States::ID::Pause);
+	stateStack_.registerState<SettingsState>(States::ID::Settings);
 }
