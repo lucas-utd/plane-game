@@ -8,11 +8,18 @@ namespace sf
 
 namespace Textures
 {
-	enum class ID
+	enum ID
 	{
 		Eagle,
 		Raptor,
+		Avenger,
+		Bullet,
+		Missile,
 		Desert,
+		HealthRefill,
+		MissileRefill,
+		FireSpread,
+		FireRate,
 		TitleScreen,
 		ButtonNormal,
 		ButtonSelected,
@@ -22,7 +29,7 @@ namespace Textures
 
 namespace Fonts
 {
-	enum class ID
+	enum ID
 	{
 		Main,
 	};
