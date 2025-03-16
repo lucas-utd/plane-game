@@ -1,10 +1,13 @@
 #include "GameState.h"
+#include "Player.h"
+#include "StateIdentifiers.h"
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, world_(*context.window)
+	, world_(*context.window, *context.fonts)
 	, player_(*context.player)
 {
+	player_.setMissionStatus(Player::MissionRunning);
 }
 
 void GameState::draw()
@@ -15,6 +18,17 @@ void GameState::draw()
 bool GameState::update(sf::Time dt)
 {
 	world_.update(dt);
+
+	if (!world_.hasAlivePlayer())
+	{
+		player_.setMissionStatus(Player::MissionFailure);
+		requestStackPush(States::GameOver);
+	}
+	else if (world_.hasPlayerReachedEnd())
+	{
+		player_.setMissionStatus(Player::MissionSuccess);
+		requestStackPush(States::GameOver);
+	}
 
 	CommandQueue& commands = world_.getCommandQueue();
 	player_.handleRealtimeInput(commands);
@@ -31,7 +45,7 @@ bool GameState::handleEvent(const sf::Event& event)
 	// Escape pressed, trigger the pause screen
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 	{
-		requestStackPush(States::ID::Pause);
+		requestStackPush(States::Pause);
 	}
 
 	return true;

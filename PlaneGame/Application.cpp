@@ -7,11 +7,12 @@
 #include "StateIdentifiers.h"
 #include "Utility.h"
 #include "SettingsState.h"
+#include "GameOverState.h"
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
-	: window_(sf::VideoMode(640, 480), "States", sf::Style::Close)
+	: window_(sf::VideoMode(1024, 768), "GamePlay", sf::Style::Close)
 	, textures_()
 	, fonts_()
 	, player_()
@@ -23,6 +24,7 @@ Application::Application()
 	window_.setKeyRepeatEnabled(false);
 
 	fonts_.load(Fonts::ID::Main, "Media/Sansation.ttf");
+
 	textures_.load(Textures::ID::TitleScreen, "Media/Textures/TitleScreen.png");
 	textures_.load(Textures::ID::ButtonNormal, "Media/Textures/ButtonNormal.png");
 	textures_.load(Textures::ID::ButtonSelected, "Media/Textures/ButtonSelected.png");
@@ -48,6 +50,7 @@ void Application::run()
 		while (timeSinceLastUpdate > TimePerFrame)
 		{
 			timeSinceLastUpdate -= TimePerFrame;
+
 			processInput();
 			update(TimePerFrame);
 
@@ -109,9 +112,10 @@ void Application::updateStatistics(sf::Time dt)
 
 void Application::registerStates()
 {
-	stateStack_.registerState<TitleState>(States::ID::Title);
-	stateStack_.registerState<MenuState>(States::ID::Menu);
-	stateStack_.registerState<GameState>(States::ID::Game);
-	stateStack_.registerState<PauseState>(States::ID::Pause);
-	stateStack_.registerState<SettingsState>(States::ID::Settings);
+	stateStack_.registerState<TitleState>(States::Title);
+	stateStack_.registerState<MenuState>(States::Menu);
+	stateStack_.registerState<GameState>(States::Game);
+	stateStack_.registerState<PauseState>(States::Pause);
+	stateStack_.registerState<SettingsState>(States::Settings);
+	stateStack_.registerState<GameOverState>(States::GameOver);
 }

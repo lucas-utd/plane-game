@@ -2,7 +2,7 @@
 
 namespace States
 {
-	enum class ID
+	enum ID
 	{
 		None,
 		Title,
@@ -11,5 +11,6 @@ namespace States
 		Loading,
 		Pause,
 		Settings,
+		GameOver
 	};
 }

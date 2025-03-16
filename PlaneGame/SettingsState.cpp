@@ -8,18 +8,20 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	: State(stack, context)
 	, GUIContainer_()
 {
-	backgroundSprite_.setTexture(context.textures->get(Textures::ID::TitleScreen));
+	backgroundSprite_.setTexture(context.textures->get(Textures::TitleScreen));
 
 	// Build key binding buttons and labels
-	addButtonLabel(Player::Action::MoveLeft, 150.f, "Move Left", context);
-	addButtonLabel(Player::Action::MoveRight, 200.f, "Move Right", context);
-	addButtonLabel(Player::Action::MoveUp, 250.f, "Move Up", context);
-	addButtonLabel(Player::Action::MoveDown, 300.f, "Move Down", context);
+	addButtonLabel(Player::MoveLeft, 300.f, "Move Left", context);
+	addButtonLabel(Player::MoveRight, 350.f, "Move Right", context);
+	addButtonLabel(Player::MoveUp, 400.f, "Move Up", context);
+	addButtonLabel(Player::MoveDown, 450.f, "Move Down", context);
+	addButtonLabel(Player::Fire, 500.f, "Fire", context);
+	addButtonLabel(Player::LaunchMissile, 550.f, "Missile", context);
 
 	updateLabels();
 
 	auto backButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	backButton->setPosition(80.f, 375.f);
+	backButton->setPosition(80.f, 620.f);
 	backButton->setText("Back");
 	backButton->setCallback(std::bind(&SettingsState::requestStackPop, this));
 

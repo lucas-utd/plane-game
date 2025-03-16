@@ -9,14 +9,25 @@ class CommandQueue;
 class Player
 {
 public:
-	enum class Action
+	enum Action
 	{
 		MoveLeft,
 		MoveRight,
 		MoveUp,
 		MoveDown,
+		Fire,
+		LaunchMissile,
 		ActionCount
 	};
+
+	enum MissionStatus
+	{
+		MissionRunning,
+		MissionSuccess,
+		MissionFailure
+	};
+
+
 
 public:
 	Player();
@@ -27,6 +38,9 @@ public:
 	void assignKey(Action action, sf::Keyboard::Key key);
 	sf::Keyboard::Key getAssignedKey(Action action) const;
 
+	void setMissionStatus(MissionStatus status);
+	MissionStatus getMissionStatus() const;
+
 private:
 	void initializeActions();
 	static bool isRealtimeAction(Action action);
@@ -34,5 +48,6 @@ private:
 private:
 	std::map<sf::Keyboard::Key, Action> keyBinding_;
 	std::map<Action, Command> actionBinding_;
+	MissionStatus currentMissionStatus_;
 };
 

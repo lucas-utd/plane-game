@@ -143,6 +143,7 @@
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="DataTables.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="GameOverState.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LoadingState.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="ParallelTask.cpp" />
     <ClCompile Include="PauseState.cpp" />
+    <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="SettingsState.cpp" />
@@ -157,6 +159,7 @@
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="TextNode.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="World.cpp" />
@@ -172,12 +175,14 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="DataTables.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="GameOverState.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="LoadingState.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="ParallelTask.h" />
     <ClInclude Include="PauseState.h" />
+    <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ResourceHolder.h" />
@@ -188,12 +193,10 @@
     <ClInclude Include="SpriteNode.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateIdentifiers.h" />
+    <ClInclude Include="TextNode.h" />
     <ClInclude Include="TitleState.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="World.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="Media\Textures\Eagle.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ResourceHolder.inl" />

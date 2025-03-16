@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 
+#include "Aircraft.h"
 #include "ResourceIdentifiers.h"
 
 class Aircrafe;
@@ -40,8 +41,8 @@ struct ProjectileData
 
 struct PickupData
 {
-	std::function<void(Aircrafe&)> action;
-	Textures::ID texture;
+	std::function<void(Aircraft&)>	action;
+	Textures::ID					texture;
 };
 
 std::vector<AircraftData> initializeAircraftData();

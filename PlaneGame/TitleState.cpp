@@ -6,14 +6,13 @@
 
 TitleState::TitleState(StateStack& stack, Context context)
 	: State(stack, context)
-	, backgroundSprite_()
 	, text_()
 	, isShowText_(true)
 	, textEffectTime_(sf::Time::Zero)
 {
-	backgroundSprite_.setTexture(context.textures->get(Textures::ID::TitleScreen));
+	backgroundSprite_.setTexture(context.textures->get(Textures::TitleScreen));
 
-	text_.setFont(context.fonts->get(Fonts::ID::Main));
+	text_.setFont(context.fonts->get(Fonts::Main));
 	text_.setString("Press any key to Start");
 	centerOrigin(text_);
 	text_.setPosition(context.window->getView().getSize() / 2.f);

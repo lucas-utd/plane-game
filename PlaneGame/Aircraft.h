@@ -4,6 +4,7 @@
 #include "ResourceIdentifiers.h"
 #include "CommandQueue.h"
 #include "TextNode.h"
+#include "Projectile.h"
 
 
 class Aircraft :
@@ -19,7 +20,7 @@ public:
 	};
 
 public:
-	explicit Aircraft(Type type, const TextureHolder& textures);
+	explicit Aircraft(Type type, const TextureHolder& textures, const FontHolder& fonts);
 
 	virtual unsigned int getCategory() const;
 	virtual sf::FloatRect getBoundingRect() const;
@@ -39,7 +40,7 @@ private:
 	virtual void updateCurrent(sf::Time dt, CommandQueue& commands);
 	void updateMovementPattern(sf::Time dt);
 	void checkPickupDrop(CommandQueue& commands);
-	void checkProjectileLaunch(CommandQueue& commands);
+	void checkProjectileLaunch(sf::Time dt, CommandQueue& commands);
 
 	void createBullets(SceneNode& node, const TextureHolder& textures) const;
 	void CreateProjectile(SceneNode& node, Projectile::Type type, float xOffset, float yOffset, const TextureHolder& textures) const;

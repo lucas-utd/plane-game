@@ -2,9 +2,10 @@
 #include "SceneNode.h"
 
 
-SceneNode::SceneNode()
+SceneNode::SceneNode(Category::Type category)
 	: children_()
 	, parent_(nullptr)
+	, defaultCategory_(category)
 {
 }
 
@@ -27,21 +28,21 @@ SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 	return result;
 }
 
-void SceneNode::update(sf::Time dt)
+void SceneNode::update(sf::Time dt, CommandQueue& commands)
 {
-	updateCurrent(dt);
-	updateChildren(dt);
+	updateCurrent(dt, commands);
+	updateChildren(dt, commands);
 }
 
-void SceneNode::updateCurrent(sf::Time dt)
+void SceneNode::updateCurrent(sf::Time dt, CommandQueue&)
 {
 }
 
-void SceneNode::updateChildren(sf::Time dt)
+void SceneNode::updateChildren(sf::Time dt, CommandQueue& commands)
 {
 	for (const Ptr& child : children_)
 	{
-		child->update(dt);
+		child->update(dt, commands);
 	}
 }
 
@@ -65,6 +66,20 @@ void SceneNode::drawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 	{
 		child->draw(target, states);
 	}
+}
+
+void SceneNode::drawBoundingRect(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	sf::FloatRect rect = getBoundingRect();
+
+	sf::RectangleShape shape;
+	shape.setPosition(rect.left, rect.top);
+	shape.setSize(sf::Vector2f(rect.width, rect.height));
+	shape.setFillColor(sf::Color::Transparent);
+	shape.setOutlineColor(sf::Color::Green);
+	shape.setOutlineThickness(1.f);
+
+	target.draw(shape);
 }
 
 sf::Vector2f SceneNode::getWorldPosition() const
@@ -100,5 +115,61 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 
 unsigned int SceneNode::getCategory() const
 {
-	return static_cast<unsigned int>(Category::Type::Scene);
+	return defaultCategory_;
+}
+
+void SceneNode::checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& collisionPairs)
+{
+	checkNodeCollision(sceneGraph, collisionPairs);
+	for (const Ptr& child : sceneGraph.children_)
+	{
+		checkNodeCollision(*child, collisionPairs);
+	}
+}
+
+void SceneNode::checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs) 
+{
+	if (this != &node && collision(*this, node) && !isDestroyed() && !node.isDestroyed())
+	{
+		collisionPairs.insert(std::minmax(this, &node));
+	}
+	for (const Ptr& child : children_)
+	{
+		child->checkNodeCollision(node, collisionPairs);
+	}
+}
+
+void SceneNode::removeWrecks()
+{
+	auto wreckFieldBegin = std::remove_if(children_.begin(), children_.end(), std::mem_fn(&SceneNode::isMarkedForRemoval));
+	children_.erase(wreckFieldBegin, children_.end());
+
+	// Call function recursively on children
+	std::for_each(children_.begin(), children_.end(), std::mem_fn(&SceneNode::removeWrecks));
+}
+
+sf::FloatRect SceneNode::getBoundingRect() const
+{
+	return sf::FloatRect();
+}
+
+bool SceneNode::isMarkedForRemoval() const
+{
+	return false;
+}
+
+bool SceneNode::isDestroyed() const
+{
+	return false;
+}
+
+bool collision(const SceneNode& lhs, const SceneNode& rhs)
+{
+	return lhs.getBoundingRect().intersects(rhs.getBoundingRect());
+}
+
+float distance(const SceneNode& lhs, const SceneNode& rhs)
+{
+	return std::hypot(lhs.getWorldPosition().x - rhs.getWorldPosition().x,
+		lhs.getWorldPosition().y - rhs.getWorldPosition().y);
 }

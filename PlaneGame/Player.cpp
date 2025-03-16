@@ -16,19 +16,22 @@ struct AircraftMover
 
 	void operator() (Aircraft& aircraft, sf::Time) const
 	{
-		aircraft.accelerate(velocity);
+		aircraft.accelerate(velocity * aircraft.getMaxSpeed());
 	}
 
 	sf::Vector2f velocity;
 };
 
 Player::Player()
+	: currentMissionStatus_(MissionRunning)
 {
 	// Set initial key bindings
 	keyBinding_[sf::Keyboard::Left] = Action::MoveLeft;
 	keyBinding_[sf::Keyboard::Right] = Action::MoveRight;
 	keyBinding_[sf::Keyboard::Up] = Action::MoveUp;
 	keyBinding_[sf::Keyboard::Down] = Action::MoveDown;
+	keyBinding_[sf::Keyboard::Space] = Action::Fire;
+	keyBinding_[sf::Keyboard::M] = Action::LaunchMissile;
 
 	// Set initial action bindings
 	initializeActions();
@@ -36,7 +39,7 @@ Player::Player()
 	// Assign all categories to player's aircraft
 	for (auto& pair : actionBinding_)
 	{
-		pair.second.category = static_cast<unsigned int>(Category::Type::PlayerAircraft);
+		pair.second.category = Category::PlayerAircraft;
 	}
 }
 
@@ -57,7 +60,7 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 void Player::handleRealtimeInput(CommandQueue& commands)
 {
 	// Traverse all assigned keys and check if they are pressed
-	for (auto pair : keyBinding_)
+	for (auto& pair : keyBinding_)
 	{
 		// If key is pressed, lookup action and trigger corresponding command
 		if (sf::Keyboard::isKeyPressed(pair.first) && isRealtimeAction(pair.second))
@@ -81,11 +84,14 @@ void Player::assignKey(Action action, sf::Keyboard::Key key)
 			++itr;
 		}
 	}
+
+	// Insert new binding
+	keyBinding_[key] = action;
 }
 
 sf::Keyboard::Key Player::getAssignedKey(Action action) const
 {
-	for (auto pair : keyBinding_)
+	for (auto& pair : keyBinding_)
 	{
 		if (pair.second == action)
 		{
@@ -96,24 +102,43 @@ sf::Keyboard::Key Player::getAssignedKey(Action action) const
 	return sf::Keyboard::Unknown;
 }
 
+void Player::setMissionStatus(MissionStatus status)
+{
+	currentMissionStatus_ = status;
+}
+
+Player::MissionStatus Player::getMissionStatus() const
+{
+	return currentMissionStatus_;
+}
+
 void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	actionBinding_[Action::MoveLeft].action = derviedAction<Aircraft>(AircraftMover(-playerSpeed, 0.f));
-	actionBinding_[Action::MoveRight].action = derviedAction<Aircraft>(AircraftMover(+playerSpeed, 0.f));
-	actionBinding_[Action::MoveUp].action = derviedAction<Aircraft>(AircraftMover(0.f, -playerSpeed));
-	actionBinding_[Action::MoveDown].action = derviedAction<Aircraft>(AircraftMover(0.f, +playerSpeed));
+	actionBinding_[Action::MoveLeft].action = derviedAction<Aircraft>(AircraftMover(-1, 0.f));
+	actionBinding_[Action::MoveRight].action = derviedAction<Aircraft>(AircraftMover(+1, 0.f));
+	actionBinding_[Action::MoveUp].action = derviedAction<Aircraft>(AircraftMover(0.f, -1));
+	actionBinding_[Action::MoveDown].action = derviedAction<Aircraft>(AircraftMover(0.f, +1));
+	actionBinding_[Action::Fire].action = derviedAction<Aircraft>([](Aircraft& a, sf::Time)
+		{
+			a.fire();
+		});
+	actionBinding_[Action::LaunchMissile].action = derviedAction<Aircraft>([](Aircraft& a, sf::Time)
+		{
+			a.launchMissile();
+		});
 }
 
 bool Player::isRealtimeAction(Action action)
 {
 	switch (action)
 	{
-	case Action::MoveLeft:
-	case Action::MoveRight:
-	case Action::MoveDown:
-	case Action::MoveUp:
+	case MoveLeft:
+	case MoveRight:
+	case MoveDown:
+	case MoveUp:
+	case Fire:
 		return true;
 
 	default:
