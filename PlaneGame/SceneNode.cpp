@@ -155,7 +155,7 @@ sf::FloatRect SceneNode::getBoundingRect() const
 
 bool SceneNode::isMarkedForRemoval() const
 {
-	return false;
+	return isDestroyed();
 }
 
 bool SceneNode::isDestroyed() const

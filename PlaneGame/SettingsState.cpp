@@ -46,7 +46,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	bool isKeyBinding = false;
 
 	// Iterate through all binding buttons to see if they are being pressed
-	for (std::size_t action = 0; action < static_cast<std::size_t>(Player::Action::ActionCount); ++action)
+	for (std::size_t action = 0; action != Player::ActionCount; ++action)
 	{
 		if (bindingButtons_[action]->isActive())
 		{
@@ -77,7 +77,7 @@ void SettingsState::updateLabels()
 {
 	Player& player = *getContext().player;
 
-	for (std::size_t i = 0; i < static_cast<std::size_t>(Player::Action::ActionCount); ++i)
+	for (std::size_t i = 0; i != Player::ActionCount; ++i)
 	{
 		auto action = static_cast<Player::Action>(i);
 		sf::Keyboard::Key key = player.getAssignedKey(action);
@@ -87,15 +87,14 @@ void SettingsState::updateLabels()
 
 void SettingsState::addButtonLabel(Player::Action action, float y, const std::string& text, Context context)
 {
-	size_t index = static_cast<size_t>(action);
-	bindingButtons_[index] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	bindingButtons_[index]->setPosition(80.f, y);
-	bindingButtons_[index]->setText(text);
-	bindingButtons_[index]->setToggle(true);
+	bindingButtons_[action] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	bindingButtons_[action]->setPosition(80.f, y);
+	bindingButtons_[action]->setText(text);
+	bindingButtons_[action]->setToggle(true);
 
-	bindingLabels_[index] = std::make_shared<GUI::Label>("", *context.fonts);
-	bindingLabels_[index]->setPosition(300.f, y + 15.f);
+	bindingLabels_[action] = std::make_shared<GUI::Label>("", *context.fonts);
+	bindingLabels_[action]->setPosition(300.f, y + 15.f);
 
-	GUIContainer_.pack(bindingButtons_[index]);
-	GUIContainer_.pack(bindingLabels_[index]);
+	GUIContainer_.pack(bindingButtons_[action]);
+	GUIContainer_.pack(bindingLabels_[action]);
 }

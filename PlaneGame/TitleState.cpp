@@ -45,7 +45,7 @@ bool TitleState::handleEvent(const sf::Event& event)
 	if (event.type == sf::Event::KeyPressed)
 	{
 		requestStackPop();
-		requestStackPush(States::ID::Menu);
+		requestStackPush(States::Menu);
 	}
 
 	return true;

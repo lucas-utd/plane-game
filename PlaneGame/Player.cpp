@@ -91,7 +91,7 @@ void Player::assignKey(Action action, sf::Keyboard::Key key)
 
 sf::Keyboard::Key Player::getAssignedKey(Action action) const
 {
-	for (auto& pair : keyBinding_)
+	for (const auto& pair : keyBinding_)
 	{
 		if (pair.second == action)
 		{
@@ -114,17 +114,15 @@ Player::MissionStatus Player::getMissionStatus() const
 
 void Player::initializeActions()
 {
-	const float playerSpeed = 200.f;
-
-	actionBinding_[Action::MoveLeft].action = derviedAction<Aircraft>(AircraftMover(-1, 0.f));
-	actionBinding_[Action::MoveRight].action = derviedAction<Aircraft>(AircraftMover(+1, 0.f));
-	actionBinding_[Action::MoveUp].action = derviedAction<Aircraft>(AircraftMover(0.f, -1));
-	actionBinding_[Action::MoveDown].action = derviedAction<Aircraft>(AircraftMover(0.f, +1));
-	actionBinding_[Action::Fire].action = derviedAction<Aircraft>([](Aircraft& a, sf::Time)
+	actionBinding_[Action::MoveLeft].action = derivedAction<Aircraft>(AircraftMover(-1, 0.f));
+	actionBinding_[Action::MoveRight].action = derivedAction<Aircraft>(AircraftMover(+1, 0.f));
+	actionBinding_[Action::MoveUp].action = derivedAction<Aircraft>(AircraftMover(0.f, -1));
+	actionBinding_[Action::MoveDown].action = derivedAction<Aircraft>(AircraftMover(0.f, +1));
+	actionBinding_[Action::Fire].action = derivedAction<Aircraft>([](Aircraft& a, sf::Time)
 		{
 			a.fire();
 		});
-	actionBinding_[Action::LaunchMissile].action = derviedAction<Aircraft>([](Aircraft& a, sf::Time)
+	actionBinding_[Action::LaunchMissile].action = derivedAction<Aircraft>([](Aircraft& a, sf::Time)
 		{
 			a.launchMissile();
 		});

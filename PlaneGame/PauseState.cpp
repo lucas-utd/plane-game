@@ -5,26 +5,42 @@
 #include "PauseState.h"
 #include "ResourceHolder.h"
 #include "Utility.h"
+#include "Button.h"
 
 PauseState::PauseState(StateStack& stack, Context context)
 	: State(stack, context)
 	, backgroundSprite_()
 	, pausedText_()
-	, instructionText_()
+	, guiContainer_()
 {
-	sf::Font& font = context.fonts->get(Fonts::ID::Main);
-	sf::Vector2f viewSize = context.window->getView().getSize();
+	sf::Font& font{ context.fonts->get(Fonts::Main) };
+	sf::Vector2f windowSize{ context.window->getSize() };
 
 	pausedText_.setFont(font);
 	pausedText_.setString("Game Paused");
 	pausedText_.setCharacterSize(70);
 	centerOrigin(pausedText_);
-	pausedText_.setPosition(viewSize.x / 2.f, 0.4f * viewSize.y);
+	pausedText_.setPosition(windowSize.x / 2.f, 0.4f * windowSize.y);
 
-	instructionText_.setFont(font);
-	instructionText_.setString("Press Escape to return to the game");
-	centerOrigin(instructionText_);
-	instructionText_.setPosition(viewSize.x / 2.f, 0.6f * viewSize.y);
+	auto returnButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	returnButton->setPosition(0.5f * windowSize.x - 100, 0.4f * windowSize.y + 75);
+	returnButton->setText("Return");
+	returnButton->setCallback([this]()
+		{
+			requestStackPop();
+		});
+
+	auto backToMenuButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	backToMenuButton->setPosition(0.5f * windowSize.x - 100, 0.4f * windowSize.y + 125);
+	backToMenuButton->setText("Back to Menu");
+	backToMenuButton->setCallback([this]()
+		{
+			requestStateClear();
+			requestStackPush(States::Menu);
+		});
+
+	guiContainer_.pack(returnButton);
+	guiContainer_.pack(backToMenuButton);
 }
 
 void PauseState::draw()
@@ -38,7 +54,7 @@ void PauseState::draw()
 
 	window.draw(backgroundShape);
 	window.draw(pausedText_);
-	window.draw(instructionText_);
+	window.draw(guiContainer_);
 }
 
 bool PauseState::update(sf::Time dt)
@@ -48,21 +64,7 @@ bool PauseState::update(sf::Time dt)
 
 bool PauseState::handleEvent(const sf::Event& event)
 {
-	if (event.type != sf::Event::KeyPressed)
-		return false;
+	guiContainer_.handleEvent(event);
 
-	if (event.key.code == sf::Keyboard::Escape)
-	{
-		// Escape pressed, remove itself to return to the game
-		requestStackPop();
-	}
-
-	if (event.key.code == sf::Keyboard::BackSpace)
-	{
-		// Backspace pressed, remove itself to return to the game
-		requestStateClear();
-		requestStackPush(States::ID::Menu);
-	}
-
-	return true;
+	return false;
 }

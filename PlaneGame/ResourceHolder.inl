@@ -1,5 +1,6 @@
 #pragma once
 #include "ResourceHolder.h"
+#include <stdexcept>
 
 
 template <typename Resource, typename Identifier>

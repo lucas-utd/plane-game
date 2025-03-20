@@ -18,12 +18,13 @@
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
 #include "CommandQueue.h"
+#include "BloomEffect.h"
 
 
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& fonts);
+	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts);
 	void update(sf::Time dt);
 	void draw();
 
@@ -52,7 +53,8 @@ private:
 	enum Layer
 	{
 		Background,
-		Air,
+		LowerAir,
+		UpperAir,
 		LayerCount
 	};
 
@@ -72,7 +74,9 @@ private:
 
 
 private:
-	sf::RenderWindow& window_;
+	sf::RenderTarget& target_;
+	sf::RenderTexture sceneTexture_;
+
 	sf::View worldView_;
 	TextureHolder textures_;
 	FontHolder& fonts_;
@@ -88,5 +92,7 @@ private:
 
 	std::vector<SpawnPoint> enemySpawnPoints_;
 	std::vector<Aircraft*> activeEnemies_;
+
+	BloomEffect bloomEffect_;
 };
 

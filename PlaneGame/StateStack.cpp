@@ -27,7 +27,7 @@ void StateStack::update(sf::Time dt)
 void StateStack::draw()
 {
 	// Draw all active states from bottom to top
-	for (auto& state : stack_)
+	for (const auto& state : stack_)
 	{
 		state->draw();
 	}

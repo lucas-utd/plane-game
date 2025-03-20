@@ -19,6 +19,7 @@ public:
 	void repair(int points);
 	void damage(int points);
 	void destroy();
+	virtual void remove();
 	bool isDestroyed() const;
 
 

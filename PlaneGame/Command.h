@@ -18,7 +18,7 @@ struct Command
 };
 
 template <typename GameObject, typename Function>
-Command::Action derviedAction(Function fn)
+Command::Action derivedAction(Function fn)
 {
 	return [=](SceneNode& node, sf::Time dt)
 		{

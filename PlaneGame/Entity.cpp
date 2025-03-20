@@ -58,6 +58,11 @@ void Entity::destroy()
 	hitpoints_ = 0;
 }
 
+void Entity::remove()
+{
+	destroy();
+}
+
 bool Entity::isDestroyed() const
 {
 	return hitpoints_ <= 0;

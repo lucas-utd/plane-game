@@ -1,22 +1,26 @@
 #include "SpriteNode.h"
 #include "World.h"
 #include "Pickup.h"
+#include "ParticleNode.h"
 
 
-World::World(sf::RenderWindow& window, FontHolder& fonts)
-	: window_(window)
-	, worldView_(window.getDefaultView())
-	, fonts_(fonts)
+World::World(sf::RenderTarget& outputTarget, FontHolder& fonts)
+	: target_(outputTarget)
+	, sceneTexture_()
+	, worldView_(outputTarget.getDefaultView())
 	, textures_()
+	, fonts_(fonts)
 	, sceneGraph_()
 	, sceneLayers_()
-	, worldBounds_(0.f, 0.f, worldView_.getSize().x, 2000.f)
+	, worldBounds_(0.f, 0.f, worldView_.getSize().x, 5000.f)
 	, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height - worldView_.getSize().y / 2.f)
 	, scrollSpeed_(-50.f)
 	, playerAircraft_(nullptr)
 	, enemySpawnPoints_()
 	, activeEnemies_()
 {
+	sceneTexture_.create(target_.getSize().x, target_.getSize().y);
+
 	loadTextures();
 	buildScene();
 
@@ -58,8 +62,19 @@ void World::update(sf::Time dt)
 
 void World::draw()
 {
-	window_.setView(worldView_);
-	window_.draw(sceneGraph_);
+	if (PostEffect::isSupported())
+	{
+		sceneTexture_.clear();
+		sceneTexture_.setView(worldView_);
+		sceneTexture_.draw(sceneGraph_);
+		sceneTexture_.display();
+		bloomEffect_.apply(sceneTexture_, target_);
+	}
+	else
+	{
+		target_.setView(worldView_);
+		target_.draw(sceneGraph_);
+	}
 }
 
 CommandQueue& World::getCommandQueue()
@@ -79,24 +94,17 @@ bool World::hasPlayerReachedEnd() const
 
 void World::loadTextures()
 {
-	textures_.load(Textures::ID::Eagle, "Media/Textures/Eagle.png");
-	textures_.load(Textures::ID::Raptor, "Media/Textures/Raptor.png");
-	textures_.load(Textures::ID::Avenger, "Media/Textures/Avenger.png");
-	textures_.load(Textures::ID::Desert, "Media/Textures/Desert.png");
-
-	textures_.load(Textures::ID::Bullet, "Media/Textures/Bullet.png");
-	textures_.load(Textures::ID::Missile, "Media/Textures/Missile.png");
-
-	textures_.load(Textures::ID::HealthRefill, "Media/Textures/HealthRefill.png");
-	textures_.load(Textures::ID::MissileRefill, "Media/Textures/MissileRefill.png");
-	textures_.load(Textures::ID::FireSpread, "Media/Textures/FireSpread.png");
-	textures_.load(Textures::ID::FireRate, "Media/Textures/FireRate.png");
+	textures_.load(Textures::Entities, "Media/Textures/Entities.png");
+	textures_.load(Textures::Jungle, "Media/Textures/Jungle.png");
+	textures_.load(Textures::Explosion, "Media/Textures/Explosion.png");
+	textures_.load(Textures::Particle, "Media/Textures/Particle.png");
+	textures_.load(Textures::FinishLine, "Media/Textures/FinishLine.png");
 }
 
 void World::adaptPlayerPosition()
 {
 	// Keep player's position inside the screen bounds, at least borderDistance units from the border
-	sf::FloatRect viewBounds{getViewBounds()};
+	sf::FloatRect viewBounds{ getViewBounds() };
 	const float borderDistance = 40.f;
 
 	sf::Vector2f position = playerAircraft_->getPosition();
@@ -183,9 +191,9 @@ void World::handleCollisions()
 void World::buildScene()
 {
 	// Initialize the different layers
-	for (std::size_t i = 0; i < LayerCount; ++i)
+	for (std::size_t i = 0; i != LayerCount; ++i)
 	{
-		Category::Type category = (i == Air) ? Category::SceneAirLayer : Category::None;
+		Category::Type category = (i == LowerAir) ? Category::SceneAirLayer : Category::None;
 
 		SceneNode::Ptr layer = std::make_unique<SceneNode>();
 		sceneLayers_[i] = layer.get();
@@ -193,21 +201,38 @@ void World::buildScene()
 		sceneGraph_.attachChild(std::move(layer));
 	}
 
-	// Prepare the background
-	sf::Texture& texture = textures_.get(Textures::ID::Desert);
+	// Prepare the tiled background
+	sf::Texture& jungleTexture = textures_.get(Textures::Jungle);
+	jungleTexture.setRepeated(true);
+
+	float viewHeight = worldView_.getSize().y;
 	sf::IntRect textureRect(worldBounds_);
-	texture.setRepeated(true);
+	textureRect.height += static_cast<int>(viewHeight);
 
 	// Add the background sprite to the scene
-	std::unique_ptr<SpriteNode> backgroundSprite = std::make_unique<SpriteNode>(texture, textureRect);
-	backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
-	sceneLayers_[Background]->attachChild(std::move(backgroundSprite));
+	std::unique_ptr<SpriteNode> jungleSprite = std::make_unique<SpriteNode>(jungleTexture, textureRect);
+	jungleSprite->setPosition(worldBounds_.left, worldBounds_.top - viewHeight);
+	sceneLayers_[Background]->attachChild(std::move(jungleSprite));
+
+	// Add the finish line to the scene
+	sf::Texture& finishTexture = textures_.get(Textures::FinishLine);
+	std::unique_ptr<SpriteNode> finishSprite = std::make_unique<SpriteNode>(finishTexture);
+	finishSprite->setPosition(0.f, -76.f);
+	sceneLayers_[Background]->attachChild(std::move(finishSprite));
+
+	// Add particle node to the scene
+	std::unique_ptr<ParticleNode> smokeNode{ std::make_unique<ParticleNode>(Particle::Smoke, textures_) };
+	sceneLayers_[LowerAir]->attachChild(std::move(smokeNode));
+
+	// Add propellant particle node to the scene
+	std::unique_ptr<ParticleNode> propellantNode{ std::make_unique<ParticleNode>(Particle::Propellant, textures_) };
+	sceneLayers_[LowerAir]->attachChild(std::move(propellantNode));
 
 	// Add player's aircraft
 	std::unique_ptr<Aircraft> player = std::make_unique<Aircraft>(Aircraft::Eagle, textures_, fonts_);
 	playerAircraft_ = player.get();
 	playerAircraft_->setPosition(spawnPosition_);
-	sceneLayers_[Air]->attachChild(std::move(player));
+	sceneLayers_[UpperAir]->attachChild(std::move(player));
 
 	// Add enemy aircraft
 	addEnemies();
@@ -218,12 +243,29 @@ void World::addEnemies()
 	// Add enemies to the spawn point container
 	addEnemy(Aircraft::Raptor, 0.f, 500.f);
 	addEnemy(Aircraft::Raptor, 0.f, 1000.f);
-	addEnemy(Aircraft::Raptor, +100.f, 1100.f);
-	addEnemy(Aircraft::Raptor, -100.f, 1100.f);
-	addEnemy(Aircraft::Avenger, -70.f, 1400.f);
-	addEnemy(Aircraft::Avenger, -70.f, 1600.f);
-	addEnemy(Aircraft::Avenger, 70.f, 1400.f);
-	addEnemy(Aircraft::Avenger, 70.f, 1600.f);
+	addEnemy(Aircraft::Raptor, +100.f, 1150.f);
+	addEnemy(Aircraft::Raptor, -100.f, 1150.f);
+	addEnemy(Aircraft::Avenger, 70.f, 1500.f);
+	addEnemy(Aircraft::Avenger, -70.f, 1500.f);
+	addEnemy(Aircraft::Avenger, -70.f, 1710.f);
+	addEnemy(Aircraft::Avenger, 70.f, 1700.f);
+	addEnemy(Aircraft::Avenger, 30.f, 1850.f);
+	addEnemy(Aircraft::Raptor, 300.f, 2200.f);
+	addEnemy(Aircraft::Raptor, -300.f, 2200.f);
+	addEnemy(Aircraft::Raptor, 0.f, 2200.f);
+	addEnemy(Aircraft::Raptor, 0.f, 2500.f);
+	addEnemy(Aircraft::Avenger, -300.f, 2700.f);
+	addEnemy(Aircraft::Avenger, -300.f, 2700.f);
+	addEnemy(Aircraft::Raptor, 0.f, 3000.f);
+	addEnemy(Aircraft::Raptor, 250.f, 3250.f);
+	addEnemy(Aircraft::Raptor, -250.f, 3250.f);
+	addEnemy(Aircraft::Avenger, 0.f, 3500.f);
+	addEnemy(Aircraft::Avenger, 0.f, 3700.f);
+	addEnemy(Aircraft::Raptor, 0.f, 3800.f);
+	addEnemy(Aircraft::Avenger, 0.f, 4000.f);
+	addEnemy(Aircraft::Avenger, -200.f, 4200.f);
+	addEnemy(Aircraft::Raptor, 200.f, 4200.f);
+	addEnemy(Aircraft::Raptor, 0.f, 4400.f);
 
 	// Sort all enemies according to their y value, such that lower enemies are checked first for spawning
 	std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(), [](SpawnPoint lhs, SpawnPoint rhs)
@@ -246,11 +288,11 @@ void World::spawnEnemies()
 	{
 		SpawnPoint spawn = enemySpawnPoints_.back();
 
-		std::unique_ptr<Aircraft> enemy { std::make_unique<Aircraft>(spawn.type, textures_, fonts_) };
+		std::unique_ptr<Aircraft> enemy{ std::make_unique<Aircraft>(spawn.type, textures_, fonts_) };
 		enemy->setPosition(spawn.x, spawn.y);
 		enemy->setRotation(180.f);
 
-		sceneLayers_[Air]->attachChild(std::move(enemy));
+		sceneLayers_[UpperAir]->attachChild(std::move(enemy));
 
 		// Enemy is spawned, remove from the listt to spawn
 		enemySpawnPoints_.pop_back();
@@ -261,11 +303,11 @@ void World::destroyEntitiesOutsideView()
 {
 	Command command;
 	command.category = Category::Projectile | Category::EnemyAircraft;
-	command.action = derviedAction<Entity>([this](Entity& e, sf::Time)
+	command.action = derivedAction<Entity>([this](Entity& e, sf::Time)
 		{
 			if (!getBattlefieldBounds().intersects(e.getBoundingRect()))
 			{
-				e.destroy();
+				e.remove();
 			}
 		});
 
@@ -277,7 +319,7 @@ void World::guideMissiles()
 	// Setup command that stores all enemies in activeEnemies_
 	Command enemyCollector;
 	enemyCollector.category = Category::EnemyAircraft;
-	enemyCollector.action = derviedAction<Aircraft>([this](Aircraft& enemy, sf::Time)
+	enemyCollector.action = derivedAction<Aircraft>([this](Aircraft& enemy, sf::Time)
 		{
 			if (!enemy.isDestroyed())
 			{
@@ -289,7 +331,7 @@ void World::guideMissiles()
 	// Setup command that guides all missiles to the enemy which is currently closest to the player
 	Command missileGuider;
 	missileGuider.category = Category::AlliedAircraft;
-	missileGuider.action = derviedAction<Projectile>([this](Projectile& missile, sf::Time)
+	missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time)
 		{
 			// Ignore unguided bullets
 			if (!missile.isGuided())
@@ -301,7 +343,7 @@ void World::guideMissiles()
 			Aircraft* closestEnemy = nullptr;
 
 			// Find closest enmey
-			for (auto& enemy : activeEnemies_)
+			for (const auto& enemy : activeEnemies_)
 			{
 				float enemyDistance = distance(missile, *enemy);
 

@@ -12,7 +12,7 @@
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
-	: window_(sf::VideoMode(1024, 768), "GamePlay", sf::Style::Close)
+	: window_(sf::VideoMode(1024, 768), "Graphics", sf::Style::Close)
 	, textures_()
 	, fonts_()
 	, player_()
@@ -23,19 +23,17 @@ Application::Application()
 {
 	window_.setKeyRepeatEnabled(false);
 
-	fonts_.load(Fonts::ID::Main, "Media/Sansation.ttf");
+	fonts_.load(Fonts::Main, "Media/Sansation.ttf");
 
-	textures_.load(Textures::ID::TitleScreen, "Media/Textures/TitleScreen.png");
-	textures_.load(Textures::ID::ButtonNormal, "Media/Textures/ButtonNormal.png");
-	textures_.load(Textures::ID::ButtonSelected, "Media/Textures/ButtonSelected.png");
-	textures_.load(Textures::ID::ButtonPressed, "Media/Textures/ButtonPressed.png");
+	textures_.load(Textures::TitleScreen, "Media/Textures/TitleScreen.png");
+	textures_.load(Textures::Buttons, "Media/Textures/Buttons.png");
 
-	statisticsText_.setFont(fonts_.get(Fonts::ID::Main));
+	statisticsText_.setFont(fonts_.get(Fonts::Main));
 	statisticsText_.setPosition(5.f, 5.f);
-	statisticsText_.setCharacterSize(10);
+	statisticsText_.setCharacterSize(10u);
 
 	registerStates();
-	stateStack_.pushState(States::ID::Title);
+	stateStack_.pushState(States::Title);
 }
 
 void Application::run()

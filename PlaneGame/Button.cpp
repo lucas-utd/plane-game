@@ -10,14 +10,11 @@ namespace GUI
 {
 	Button::Button(const FontHolder& fonts, const TextureHolder& textures)
 		: callback_()
-		, normalTexture_(textures.get(Textures::ID::ButtonNormal))
-		, selectedTexture_(textures.get(Textures::ID::ButtonSelected))
-		, pressedTexture_(textures.get(Textures::ID::ButtonPressed))
-		, sprite_()
-		, text_("", fonts.get(Fonts::ID::Main), 16)
+		, sprite_(textures.get(Textures::Buttons))
+		, text_("", fonts.get(Fonts::Main), 16)
 		, isToggle_(false)
 	{
-		sprite_.setTexture(normalTexture_);
+		changeTexture(Normal);
 
 		sf::FloatRect bounds = sprite_.getLocalBounds();
 		text_.setPosition(bounds.width / 2.f, bounds.height / 2.f);
@@ -48,14 +45,14 @@ namespace GUI
 	{
 		Component::select();
 
-		sprite_.setTexture(selectedTexture_);
+		changeTexture(Selected);
 	}
 
 	void Button::deselect()
 	{
 		Component::deselect();
 
-		sprite_.setTexture(normalTexture_);
+		changeTexture(Normal);
 	}
 
 	void Button::activate()
@@ -65,7 +62,7 @@ namespace GUI
 		// If we are toggle then we should show that the button is pressed and thus "toggled"
 		if (isToggle_)
 		{
-			sprite_.setTexture(pressedTexture_);
+			changeTexture(Pressed);
 		}
 
 		if (callback_)
@@ -88,11 +85,11 @@ namespace GUI
 			// Reset texture to right one depending on if we are selected or not
 			if (isSelected())
 			{
-				sprite_.setTexture(selectedTexture_);
+				changeTexture(Selected);
 			}
 			else
 			{
-				sprite_.setTexture(normalTexture_);
+				changeTexture(Normal);
 			}
 		}
 	}
@@ -107,5 +104,11 @@ namespace GUI
 		states.transform *= getTransform();
 		target.draw(sprite_, states);
 		target.draw(text_, states);
+	}
+
+	void Button::changeTexture(Type buttonType)
+	{
+		sf::IntRect textureRect(0, 50 * buttonType, 200, 50);
+		sprite_.setTextureRect(textureRect);
 	}
 }

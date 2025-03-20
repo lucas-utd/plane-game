@@ -11,6 +11,7 @@
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
 
+
 namespace GUI
 {
 	class Button : public Component
@@ -18,6 +19,14 @@ namespace GUI
 	public:
 		typedef std::shared_ptr<Button> Ptr;
 		typedef std::function<void()> Callback;
+
+		enum Type
+		{
+			Normal,
+			Selected,
+			Pressed,
+			ButtonCount
+		};
 
 	public:
 		Button(const FontHolder& fonts, const TextureHolder& textures);
@@ -37,12 +46,10 @@ namespace GUI
 
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		void changeTexture(Type buttonType);
 
 	private:
 		Callback callback_;
-		const sf::Texture& normalTexture_;
-		const sf::Texture& selectedTexture_;
-		const sf::Texture& pressedTexture_;
 		sf::Sprite sprite_;
 		sf::Text text_;
 		bool isToggle_;
