@@ -32,11 +32,11 @@ void GameOverState::draw()
 	window.setView(window.getDefaultView());
 
 	// Create dark, semitransparent background
-	sf::RectangleShape backgroudnShape;
-	backgroudnShape.setFillColor(sf::Color(0, 0, 0, 150));
-	backgroudnShape.setSize(window.getView().getSize());
+	sf::RectangleShape backgroundShape;
+	backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
+	backgroundShape.setSize(window.getView().getSize());
 
-	window.draw(backgroudnShape);
+	window.draw(backgroundShape);
 	window.draw(gameOverText_);
 }
 

@@ -8,11 +8,12 @@
 
 namespace GUI
 {
-	Button::Button(const FontHolder& fonts, const TextureHolder& textures)
+	Button::Button(State::Context context)
 		: callback_()
-		, sprite_(textures.get(Textures::Buttons))
-		, text_("", fonts.get(Fonts::Main), 16)
+		, sprite_(context.textures->get(Textures::Buttons))
+		, text_("", context.fonts->get(Fonts::Main), 16)
 		, isToggle_(false)
+		, sounds_(*context.sounds)
 	{
 		changeTexture(Normal);
 
@@ -75,6 +76,8 @@ namespace GUI
 		{
 			deactivate();
 		}
+
+		sounds_.play(SoundEffect::Button);
 	}
 
 	void Button::deactivate()

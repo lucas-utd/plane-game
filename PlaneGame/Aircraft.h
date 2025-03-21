@@ -36,6 +36,7 @@ public:
 
 	void fire();
 	void launchMissile();
+	void playLocalSound(CommandQueue& commands, SoundEffect::ID effect);
 
 private:
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -61,6 +62,7 @@ private:
 	bool isFiring_;
 	bool isLaunchingMissile_;
 	bool isShowExplosion_;
+	bool isPlayedExplosionSound_;
 	bool isSpawnedPickup_;
 
 	int fireRateLevel_;

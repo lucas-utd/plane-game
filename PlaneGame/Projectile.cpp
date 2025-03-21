@@ -65,8 +65,8 @@ void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) 
 
 unsigned int Projectile::getCategory() const
 {
-	if (isGuided())
-		return Category::Projectile;
+	if (type_ == EnemyBullet)
+		return Category::EnemyAircraft;
 	else
 		return Category::AlliedProjectile;
 }

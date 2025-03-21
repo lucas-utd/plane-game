@@ -65,9 +65,9 @@ sf::Time Animation::getDuration() const
 	return duration_;
 }
 
-void Animation::setRepeating(bool flat)
+void Animation::setRepeating(bool flag)
 {
-	isRepeat_ = flat;
+	isRepeat_ = flag;
 }
 
 bool Animation::isRepeating() const

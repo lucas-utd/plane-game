@@ -90,6 +90,7 @@ sf::Vector2f SceneNode::getWorldPosition() const
 sf::Transform SceneNode::getWorldTransform() const
 {
 	sf::Transform transform = sf::Transform::Identity;
+
 	for (const SceneNode* node = this; node != nullptr; node = node->parent_)
 	{
 		transform = node->getTransform() * transform;
@@ -107,7 +108,7 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 	}
 
 	// Command children
-	for (Ptr& child : children_)
+	for (const Ptr& child : children_)
 	{
 		child->onCommand(command, dt);
 	}

@@ -6,7 +6,7 @@
 
 SettingsState::SettingsState(StateStack& stack, Context context)
 	: State(stack, context)
-	, GUIContainer_()
+	, guiContainer_()
 {
 	backgroundSprite_.setTexture(context.textures->get(Textures::TitleScreen));
 
@@ -20,12 +20,12 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 
 	updateLabels();
 
-	auto backButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto backButton = std::make_shared<GUI::Button>(context);
 	backButton->setPosition(80.f, 620.f);
 	backButton->setText("Back");
 	backButton->setCallback(std::bind(&SettingsState::requestStackPop, this));
 
-	GUIContainer_.pack(backButton);
+	guiContainer_.pack(backButton);
 }
 
 void SettingsState::draw()
@@ -33,7 +33,7 @@ void SettingsState::draw()
 	sf::RenderWindow& window = *getContext().window;
 
 	window.draw(backgroundSprite_);
-	window.draw(GUIContainer_);
+	window.draw(guiContainer_);
 }
 
 bool SettingsState::update(sf::Time dt)
@@ -67,7 +67,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	}
 	else
 	{
-		GUIContainer_.handleEvent(event);
+		guiContainer_.handleEvent(event);
 	}
 
 	return false;
@@ -87,7 +87,7 @@ void SettingsState::updateLabels()
 
 void SettingsState::addButtonLabel(Player::Action action, float y, const std::string& text, Context context)
 {
-	bindingButtons_[action] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	bindingButtons_[action] = std::make_shared<GUI::Button>(context);
 	bindingButtons_[action]->setPosition(80.f, y);
 	bindingButtons_[action]->setText(text);
 	bindingButtons_[action]->setToggle(true);
@@ -95,6 +95,6 @@ void SettingsState::addButtonLabel(Player::Action action, float y, const std::st
 	bindingLabels_[action] = std::make_shared<GUI::Label>("", *context.fonts);
 	bindingLabels_[action]->setPosition(300.f, y + 15.f);
 
-	GUIContainer_.pack(bindingButtons_[action]);
-	GUIContainer_.pack(bindingLabels_[action]);
+	guiContainer_.pack(bindingButtons_[action]);
+	guiContainer_.pack(bindingLabels_[action]);
 }

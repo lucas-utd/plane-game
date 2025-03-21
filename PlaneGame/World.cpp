@@ -2,14 +2,16 @@
 #include "World.h"
 #include "Pickup.h"
 #include "ParticleNode.h"
+#include "SoundNode.h"
 
 
-World::World(sf::RenderTarget& outputTarget, FontHolder& fonts)
+World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds)
 	: target_(outputTarget)
 	, sceneTexture_()
 	, worldView_(outputTarget.getDefaultView())
 	, textures_()
 	, fonts_(fonts)
+	, sounds_(sounds)
 	, sceneGraph_()
 	, sceneLayers_()
 	, worldBounds_(0.f, 0.f, worldView_.getSize().x, 5000.f)
@@ -58,6 +60,8 @@ void World::update(sf::Time dt)
 
 	// Adapt player position based on velocity
 	adaptPlayerPosition();
+
+	updateSounds();
 }
 
 void World::draw()
@@ -188,6 +192,15 @@ void World::handleCollisions()
 	}
 }
 
+void World::updateSounds()
+{
+	// Set listener position to the player's position
+	sounds_.setListenerPosition(playerAircraft_->getWorldPosition());
+
+	// Remove unused sounds
+	sounds_.removeStoppedSounds();
+}
+
 void World::buildScene()
 {
 	// Initialize the different layers
@@ -227,6 +240,10 @@ void World::buildScene()
 	// Add propellant particle node to the scene
 	std::unique_ptr<ParticleNode> propellantNode{ std::make_unique<ParticleNode>(Particle::Propellant, textures_) };
 	sceneLayers_[LowerAir]->attachChild(std::move(propellantNode));
+
+	// Add sound effect node
+	std::unique_ptr<SoundNode> soundNode{ std::make_unique<SoundNode>(sounds_) };
+	sceneGraph_.attachChild(std::move(soundNode));
 
 	// Add player's aircraft
 	std::unique_ptr<Aircraft> player = std::make_unique<Aircraft>(Aircraft::Eagle, textures_, fonts_);
@@ -330,7 +347,7 @@ void World::guideMissiles()
 
 	// Setup command that guides all missiles to the enemy which is currently closest to the player
 	Command missileGuider;
-	missileGuider.category = Category::AlliedAircraft;
+	missileGuider.category = Category::AlliedProjectile;
 	missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time)
 		{
 			// Ignore unguided bullets

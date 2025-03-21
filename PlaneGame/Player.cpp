@@ -60,7 +60,7 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 void Player::handleRealtimeInput(CommandQueue& commands)
 {
 	// Traverse all assigned keys and check if they are pressed
-	for (auto& pair : keyBinding_)
+	for (const auto& pair : keyBinding_)
 	{
 		// If key is pressed, lookup action and trigger corresponding command
 		if (sf::Keyboard::isKeyPressed(pair.first) && isRealtimeAction(pair.second))

@@ -7,6 +7,8 @@
 
 #include "StateIdentifiers.h"
 #include "ResourceIdentifiers.h"
+#include "MusicPlayer.h"
+#include "SoundPlayer.h"
 
 
 namespace sf
@@ -24,12 +26,15 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player,
+			MusicPlayer& music, SoundPlayer& sounds);
 
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
 		Player* player;
+		MusicPlayer* music;
+		SoundPlayer* sounds;
 	};
 
 public:

@@ -4,6 +4,7 @@
 #include "Utility.h"
 #include "DataTables.h"
 #include "Pickup.h"
+#include "SoundNode.h"
 
 namespace
 {
@@ -13,7 +14,7 @@ namespace
 Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& fonts)
 	: Entity(Table[type].hitpoints)
 	, type_(type)
-	, sprite_(textures.get(Table[type].texture))
+	, sprite_(textures.get(Table[type].texture), Table[type].textureRect)
 	, explosion_(textures.get(Textures::Explosion))
 	, fireCommand_()
 	, missileCommand_()
@@ -21,6 +22,7 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 	, isFiring_(false)
 	, isLaunchingMissile_(false)
 	, isShowExplosion_(true)
+	, isPlayedExplosionSound_(false)
 	, isSpawnedPickup_(false)
 	, fireRateLevel_(1)
 	, spreadLevel_(1)
@@ -93,6 +95,14 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 	{
 		checkPickupDrop(commands);
 		explosion_.update(dt);
+
+		// Play explosion sound only once
+		if (!isPlayedExplosionSound_)
+		{
+			SoundEffect::ID soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
+			playLocalSound(commands, soundEffect);
+			isPlayedExplosionSound_ = true;
+		}
 		return;
 	}
 
@@ -181,6 +191,19 @@ void Aircraft::launchMissile()
 	}
 }
 
+void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect::ID effect)
+{
+	sf::Vector2f worldPosition = getWorldPosition();
+
+	Command command;
+	command.category = Category::SoundEffect;
+	command.action = derivedAction<SoundNode>(
+		[effect, worldPosition](SoundNode& node, sf::Time dt) {
+			node.playSound(effect, worldPosition);
+		});
+	commands.push(command);
+}
+
 void Aircraft::updateMovementPattern(sf::Time dt)
 {
 	// Enemy airplane: Movement pattern
@@ -199,7 +222,7 @@ void Aircraft::updateMovementPattern(sf::Time dt)
 		float vx = getMaxSpeed() * std::cos(radians);
 		float vy = getMaxSpeed() * std::sin(radians);
 
-		accelerate(vx, vy);
+		setVelocity(vx, vy);
 
 		// Update travelled distance
 		travelledDistance_ += getMaxSpeed() * dt.asSeconds();
@@ -228,6 +251,8 @@ void Aircraft::checkProjectileLaunch(sf::Time dt, CommandQueue& commands)
 	if (isFiring_ && fireCountdown_ <= sf::Time::Zero)
 	{
 		commands.push(fireCommand_);
+		playLocalSound(commands, isAllied() ? SoundEffect::AlliedGunfire : SoundEffect::EnemyGunfire);
+		
 		fireCountdown_ += Table[type_].fireInterval / (fireRateLevel_ + 1.0f);
 		isFiring_ = false;
 	}

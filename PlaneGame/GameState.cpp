@@ -4,10 +4,13 @@
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, world_(*context.window, *context.fonts)
+	, world_(*context.window, *context.fonts, *context.sounds)
 	, player_(*context.player)
 {
 	player_.setMissionStatus(Player::MissionRunning);
+
+	// Play game theme
+	context.music->play(Music::MissionTheme);
 }
 
 void GameState::draw()

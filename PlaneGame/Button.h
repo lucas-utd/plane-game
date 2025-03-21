@@ -10,6 +10,8 @@
 #include "Component.h"
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
+#include "SoundPlayer.h"
+#include "State.h"
 
 
 namespace GUI
@@ -29,7 +31,7 @@ namespace GUI
 		};
 
 	public:
-		Button(const FontHolder& fonts, const TextureHolder& textures);
+		Button(State::Context context);
 
 		void setCallback(Callback callback);
 		void setText(const std::string& text);
@@ -53,6 +55,7 @@ namespace GUI
 		sf::Sprite sprite_;
 		sf::Text text_;
 		bool isToggle_;
+		SoundPlayer& sounds_;
 	};
 }
 

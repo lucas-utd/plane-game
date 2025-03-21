@@ -8,29 +8,29 @@
 
 MenuState::MenuState(StateStack& stack, Context context)
 	: State(stack, context)
-	, GUIContainer_()
+	, guiContainer_()
 {
 	sf::Texture& texture = context.textures->get(Textures::ID::TitleScreen);
 	backgroundSprite_.setTexture(texture);
 
-	auto playButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto playButton = std::make_shared<GUI::Button>(context);
 	playButton->setPosition(100.f, 300.f);
 	playButton->setText("Play");
 	playButton->setCallback([this]()
 		{
 			requestStackPop();
-			requestStackPush(States::ID::Game);
+			requestStackPush(States::Game);
 		});
 
-	auto settingsButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto settingsButton = std::make_shared<GUI::Button>(context);
 	settingsButton->setPosition(100.f, 350.f);
 	settingsButton->setText("Settings");
 	settingsButton->setCallback([this]()
 		{
-			requestStackPush(States::ID::Settings);
+			requestStackPush(States::Settings);
 		});
 
-	auto exitButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	auto exitButton = std::make_shared<GUI::Button>(context);
 	exitButton->setPosition(100.f, 400.f);
 	exitButton->setText("Exit");
 	exitButton->setCallback([this]()
@@ -38,9 +38,12 @@ MenuState::MenuState(StateStack& stack, Context context)
 			requestStackPop();
 		});
 
-	GUIContainer_.pack(playButton);
-	GUIContainer_.pack(settingsButton);
-	GUIContainer_.pack(exitButton);
+	guiContainer_.pack(playButton);
+	guiContainer_.pack(settingsButton);
+	guiContainer_.pack(exitButton);
+
+	// Play menu theme
+	context.music->play(Music::ID::MenuTheme);
 }
 
 void MenuState::draw()
@@ -50,7 +53,7 @@ void MenuState::draw()
 	window.setView(window.getDefaultView());
 
 	window.draw(backgroundSprite_);
-	window.draw(GUIContainer_);
+	window.draw(guiContainer_);
 }
 
 bool MenuState::update(sf::Time dt)
@@ -60,6 +63,6 @@ bool MenuState::update(sf::Time dt)
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
-	GUIContainer_.handleEvent(event);
+	guiContainer_.handleEvent(event);
 	return false;
 }

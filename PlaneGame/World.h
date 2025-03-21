@@ -19,12 +19,13 @@
 #include "ResourceIdentifiers.h"
 #include "CommandQueue.h"
 #include "BloomEffect.h"
+#include "SoundPlayer.h"
 
 
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts);
+	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds);
 	void update(sf::Time dt);
 	void draw();
 
@@ -38,6 +39,7 @@ private:
 	void adaptPlayerPosition();
 	void adaptPlayerVelocity();
 	void handleCollisions();
+	void updateSounds();
 	
 	void buildScene();
 	void addEnemies();
@@ -80,6 +82,7 @@ private:
 	sf::View worldView_;
 	TextureHolder textures_;
 	FontHolder& fonts_;
+	SoundPlayer& sounds_;
 
 	SceneNode sceneGraph_;
 	std::array<SceneNode*, LayerCount> sceneLayers_;

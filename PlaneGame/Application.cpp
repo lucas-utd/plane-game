@@ -16,12 +16,15 @@ Application::Application()
 	, textures_()
 	, fonts_()
 	, player_()
-	, stateStack_(State::Context(window_, textures_, fonts_, player_))
+	, music_()
+	, sounds_()
+	, stateStack_(State::Context(window_, textures_, fonts_, player_, music_, sounds_))
 	, statisticsText_()
 	, statisticsUpdateTime_()
 	, statisticsNumFrames_(0)
 {
 	window_.setKeyRepeatEnabled(false);
+	window_.setVerticalSyncEnabled(true);
 
 	fonts_.load(Fonts::Main, "Media/Sansation.ttf");
 
@@ -34,6 +37,8 @@ Application::Application()
 
 	registerStates();
 	stateStack_.pushState(States::Title);
+
+	music_.setVolume(25.f);
 }
 
 void Application::run()

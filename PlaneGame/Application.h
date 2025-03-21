@@ -7,6 +7,8 @@
 #include "ResourceIdentifiers.h"
 #include "StateStack.h"
 #include "Player.h"
+#include "SoundPlayer.h"
+#include "MusicPlayer.h"
 
 class Application
 {
@@ -30,6 +32,8 @@ private:
 	FontHolder fonts_;
 	Player player_;
 
+	MusicPlayer music_;
+	SoundPlayer sounds_;
 	StateStack stateStack_;
 
 	sf::Text statisticsText_;

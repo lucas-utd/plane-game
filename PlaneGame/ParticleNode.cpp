@@ -70,6 +70,7 @@ void ParticleNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states
 	// Apply particle texture
 	states.texture = &texture_;
 
+	// Draw vertices
 	target.draw(vertexArray_, states);
 }
 

@@ -152,6 +152,7 @@
     <ClCompile Include="LoadingState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="ParallelTask.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
     <ClCompile Include="PauseState.cpp" />
@@ -160,6 +161,8 @@
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="SettingsState.cpp" />
+    <ClCompile Include="SoundNode.cpp" />
+    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
@@ -188,6 +191,7 @@
     <ClInclude Include="Label.h" />
     <ClInclude Include="LoadingState.h" />
     <ClInclude Include="MenuState.h" />
+    <ClInclude Include="MusicPlayer.h" />
     <ClInclude Include="ParallelTask.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleNode.h" />
@@ -199,6 +203,8 @@
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="ResourceIdentifiers.h" />
     <ClInclude Include="SettingsState.h" />
+    <ClInclude Include="SoundNode.h" />
+    <ClInclude Include="SoundPlayer.h" />
     <ClInclude Include="StateStack.h" />
     <ClInclude Include="SceneNode.h" />
     <ClInclude Include="SpriteNode.h" />

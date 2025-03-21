@@ -16,6 +16,6 @@ public:
 
 private:
 	sf::Sprite backgroundSprite_;
-	GUI::Container GUIContainer_;
+	GUI::Container guiContainer_;
 };
 
