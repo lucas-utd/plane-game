@@ -1,4 +1,6 @@
 #pragma once
+#include <SFML/Graphics/Sprite.hpp>
+
 #include "Entity.h"
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
@@ -29,6 +31,7 @@ public:
 	virtual bool isMarkedForRemoval() const;
 	bool isAllied() const;
 	float getMaxSpeed() const;
+	void disablePickups();
 
 	void increaseFireRate();
 	void increaseSpread();
@@ -37,6 +40,10 @@ public:
 	void fire();
 	void launchMissile();
 	void playLocalSound(CommandQueue& commands, SoundEffect::ID effect);
+	int getIdentifier() const;
+	void setIdentifier(int identifier);
+	int getMissileAmmo() const;
+	void setMissileAmmo(int ammo);
 
 private:
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -62,8 +69,9 @@ private:
 	bool isFiring_;
 	bool isLaunchingMissile_;
 	bool isShowExplosion_;
-	bool isPlayedExplosionSound_;
+	bool isExplosionBegin_;
 	bool isSpawnedPickup_;
+	bool isPickupsEnabled_;
 
 	int fireRateLevel_;
 	int spreadLevel_;
@@ -74,5 +82,7 @@ private:
 	std::size_t directionIndex_;
 	TextNode* healthDisplay_;
 	TextNode* missileDisplay_;
+
+	int identifier_;
 };
 

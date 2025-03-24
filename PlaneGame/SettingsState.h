@@ -21,12 +21,12 @@ public:
 
 private:
 	void updateLabels();
-	void addButtonLabel(Player::Action action, float y, const std::string& text, Context context);
+	void addButtonLabel(std::size_t index, std::size_t x, std::size_t y, const std::string& text, Context context);
 
 private:
 	sf::Sprite backgroundSprite_;
 	GUI::Container guiContainer_;
-	std::array<GUI::Button::Ptr, static_cast<int>(Player::Action::ActionCount)> bindingButtons_;
-	std::array<GUI::Label::Ptr, static_cast<int>(Player::Action::ActionCount)> bindingLabels_;
+	std::array<GUI::Button::Ptr, 2 * PlayerAction::Count> bindingButtons_;
+	std::array<GUI::Label::Ptr, 2 * PlayerAction::Count> bindingLabels_;
 };
 

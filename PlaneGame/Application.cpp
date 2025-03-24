@@ -8,6 +8,7 @@
 #include "Utility.h"
 #include "SettingsState.h"
 #include "GameOverState.h"
+#include "MultiplayerGameState.h"
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
@@ -15,10 +16,11 @@ Application::Application()
 	: window_(sf::VideoMode(1024, 768), "Graphics", sf::Style::Close)
 	, textures_()
 	, fonts_()
-	, player_()
 	, music_()
 	, sounds_()
-	, stateStack_(State::Context(window_, textures_, fonts_, player_, music_, sounds_))
+	, keyBinding1_(1)
+	, keyBinding2_(2)
+	, stateStack_(State::Context(window_, textures_, fonts_, music_, sounds_, keyBinding1_, keyBinding2_))
 	, statisticsText_()
 	, statisticsUpdateTime_()
 	, statisticsNumFrames_(0)
@@ -118,7 +120,11 @@ void Application::registerStates()
 	stateStack_.registerState<TitleState>(States::Title);
 	stateStack_.registerState<MenuState>(States::Menu);
 	stateStack_.registerState<GameState>(States::Game);
+	stateStack_.registerState<MultiplayerGameState>(States::HostGame, true);
+	stateStack_.registerState<MultiplayerGameState>(States::JoinGame, true);
 	stateStack_.registerState<PauseState>(States::Pause);
+	stateStack_.registerState<PauseState>(States::NetworkPause, true);
 	stateStack_.registerState<SettingsState>(States::Settings);
-	stateStack_.registerState<GameOverState>(States::GameOver);
+	stateStack_.registerState<GameOverState>(States::GameOver, "Mission Failed!");
+	stateStack_.registerState<GameOverState>(States::MissionSuccess, "Mission Successful!");
 }

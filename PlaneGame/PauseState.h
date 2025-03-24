@@ -18,5 +18,6 @@ private:
 	sf::Sprite backgroundSprite_;
 	sf::Text pausedText_;
 	GUI::Container guiContainer_;
+	bool isLetUpdatesThrough_;
 };
 

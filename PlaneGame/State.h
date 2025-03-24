@@ -9,6 +9,7 @@
 #include "ResourceIdentifiers.h"
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
+#include "KeyBinding.h"
 
 
 namespace sf
@@ -27,7 +28,7 @@ public:
 	struct Context
 	{
 		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player,
-			MusicPlayer& music, SoundPlayer& sounds);
+			MusicPlayer& music, SoundPlayer& sounds, KeyBinding& keys1, KeyBinding& keys2);
 
 		sf::RenderWindow* window;
 		TextureHolder* textures;
@@ -35,6 +36,8 @@ public:
 		Player* player;
 		MusicPlayer* music;
 		SoundPlayer* sounds;
+		KeyBinding* keys1;
+		KeyBinding* keys2;
 	};
 
 public:

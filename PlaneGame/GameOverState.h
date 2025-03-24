@@ -10,7 +10,7 @@
 class GameOverState : public State
 {
 public:
-	GameOverState(StateStack& stack, Context context);
+	GameOverState(StateStack& stack, Context context, const std::string& text);
 
 	virtual void draw() override;
 	virtual bool update(sf::Time dt) override;

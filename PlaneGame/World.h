@@ -20,19 +20,45 @@
 #include "CommandQueue.h"
 #include "BloomEffect.h"
 #include "SoundPlayer.h"
+#include "Pickup.h"
+#include "NetworkProtocol.h"
+#include "NetworkNode.h"
+#include "SpriteNode.h"
 
+// Forward declaration
+namespace sf
+{
+	class RenderTarget;
+}
 
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds);
+	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked = false);
 	void update(sf::Time dt);
 	void draw();
 
+	sf::FloatRect getViewBounds() const;
 	CommandQueue& getCommandQueue();
+
+	Aircraft* addAircraft(int identifier);
+	void removeAircraft(int identifier);
+	void setCurrentBattleFieldPosition(float lineY);
+	void setWorldHeight(float height);
+
+	void addEnemy(Aircraft::Type type, float relX, float relY);
+	void sortEnemies();
 
 	bool hasAlivePlayer() const;
 	bool hasPlayerReachedEnd() const;
+
+	void setWorldScrollCompensation(float compensation);
+
+	Aircraft* getAircraft(int identifier) const;
+	sf::FloatRect getBattleFieldBounds() const;
+
+	void createPickup(sf::Vector2f position, Pickup::Type type);
+	bool pollGameAction(GameActions::Action& out);
 
 private:
 	void loadTextures();
@@ -43,13 +69,9 @@ private:
 	
 	void buildScene();
 	void addEnemies();
-	void addEnemy(Aircraft::Type type, float relX, float relY);
 	void spawnEnemies();
 	void destroyEntitiesOutsideView();
 	void guideMissiles();
-	sf::FloatRect getViewBounds() const;
-	sf::FloatRect getBattlefieldBounds() const;
-
 
 private:
 	enum Layer
@@ -91,11 +113,16 @@ private:
 	sf::FloatRect worldBounds_;
 	sf::Vector2f spawnPosition_;
 	float scrollSpeed_;
+	float scrollSpeedCompensation_;
 	Aircraft* playerAircraft_;
 
 	std::vector<SpawnPoint> enemySpawnPoints_;
 	std::vector<Aircraft*> activeEnemies_;
 
 	BloomEffect bloomEffect_;
+
+	bool networkedWorld;
+	NetworkNode* networkNode_;
+	SpriteNode* finishSprite_;
 };
 

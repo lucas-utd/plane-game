@@ -38,6 +38,13 @@ int Entity::getHitpoints() const
 	return hitpoints_;
 }
 
+void Entity::setHitpoints(int points)
+{
+	assert(points > 0 && "Set hitpoints with negative points");
+
+	hitpoints_ = points;
+}
+
 void Entity::repair(int points)
 {
 	assert(points > 0 && "Repairing with negative points");

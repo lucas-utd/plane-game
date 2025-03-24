@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "Player.h"
 
-GameOverState::GameOverState(StateStack& stack, Context context)
+GameOverState::GameOverState(StateStack& stack, Context context, const std::string& text)
 	: State(stack, context)
 	, gameOverText_()
 	, elapsedTime_()
@@ -12,15 +12,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 	sf::Vector2f windowSize(context.window->getSize());
 
 	gameOverText_.setFont(font);
-	if (context.player->getMissionStatus() == Player::MissionFailure)
-	{
-		gameOverText_.setString("Mission Failed");
-	}
-	else
-	{
-		gameOverText_.setString("Mission Complete");
-	}
-
+	gameOverText_.setString(text);
 	gameOverText_.setCharacterSize(70);
 	centerOrigin(gameOverText_);
 	gameOverText_.setPosition(0.5f * windowSize.x, 0.4f * windowSize.y);

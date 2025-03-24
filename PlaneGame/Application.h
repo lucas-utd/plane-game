@@ -30,10 +30,11 @@ private:
 	sf::RenderWindow window_;
 	TextureHolder textures_;
 	FontHolder fonts_;
-	Player player_;
-
 	MusicPlayer music_;
 	SoundPlayer sounds_;
+
+	KeyBinding keyBinding1_;
+	KeyBinding keyBinding2_;
 	StateStack stateStack_;
 
 	sf::Text statisticsText_;

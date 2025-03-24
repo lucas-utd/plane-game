@@ -35,6 +35,9 @@ public:
 	template <typename T>
 	void registerState(States::ID stateID);
 
+	template <typename T, typename Param1>
+	void registerState(States::ID stateID, Param1 param1);
+
 	void update(sf::Time dt);
 	void draw();
 	void handleEvent(const sf::Event& event);
@@ -73,6 +76,15 @@ void StateStack::registerState(States::ID stateID)
 	factories_[stateID] = [this]()
 		{
 			return State::Ptr(std::make_unique<T>(*this, context_));
+		};
+}
+
+template <typename T, typename Param1>
+void StateStack::registerState(States::ID stateID, Param1 arg1)
+{
+	factories_[stateID] = [this, arg1]()
+		{
+			return State::Ptr(std::make_unique<T>(*this, context_, arg1));
 		};
 }
 

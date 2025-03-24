@@ -6,6 +6,9 @@
 #include "Pickup.h"
 #include "SoundNode.h"
 
+#include <cmath>
+#include "NetworkNode.h"
+
 namespace
 {
 	const std::vector<AircraftData> Table = initializeAircraftData();
@@ -22,16 +25,16 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 	, isFiring_(false)
 	, isLaunchingMissile_(false)
 	, isShowExplosion_(true)
-	, isPlayedExplosionSound_(false)
-	, isSpawnedPickup_(false)
+	, isExplosionBegin_(false)
+	, isPickupsEnabled_(true)
 	, fireRateLevel_(1)
 	, spreadLevel_(1)
 	, missileAmmo_(2)
 	, dropPickupCommand_()
 	, travelledDistance_(0.f)
 	, directionIndex_(0)
-	, healthDisplay_(nullptr)
 	, missileDisplay_(nullptr)
+	, identifier_(0)
 {
 	explosion_.setFrameSize(sf::Vector2i(256, 256));
 	explosion_.setNumFrames(16);
@@ -71,6 +74,16 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 	updateTexts();
 }
 
+int Aircraft::getMissileAmmo() const
+{
+	return missileAmmo_;
+}
+
+void Aircraft::setMissileAmmo(int ammo)
+{
+	missileAmmo_ = ammo;
+}
+
 
 void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -97,11 +110,27 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 		explosion_.update(dt);
 
 		// Play explosion sound only once
-		if (!isPlayedExplosionSound_)
+		if (!isExplosionBegin_)
 		{
 			SoundEffect::ID soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
 			playLocalSound(commands, soundEffect);
-			isPlayedExplosionSound_ = true;
+
+			// Emit network game action for enemy explosions
+			if (!isAllied())
+			{
+				sf::Vector2f position = getWorldPosition();
+
+				Command command;
+				command.category = Category::Network;
+				command.action = derivedAction<NetworkNode>([position](NetworkNode& node, sf::Time)
+					{
+						node.notifyGameAction(GameActions::EnemyExplode, position);
+					});
+
+				commands.push(command);
+			}
+
+			isExplosionBegin_ = true;
 		}
 		return;
 	}
@@ -204,6 +233,16 @@ void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect::ID effect)
 	commands.push(command);
 }
 
+int Aircraft::getIdentifier() const
+{
+	return identifier_;
+}
+
+void Aircraft::setIdentifier(int identifier)
+{
+	identifier_ = identifier;
+}
+
 void Aircraft::updateMovementPattern(sf::Time dt)
 {
 	// Enemy airplane: Movement pattern
@@ -231,7 +270,7 @@ void Aircraft::updateMovementPattern(sf::Time dt)
 
 void Aircraft::checkPickupDrop(CommandQueue& commands)
 {
-	if (!isAllied() && randomInt(3) == 0 && !isSpawnedPickup_)
+	if (!isAllied() && randomInt(3) == 0 && !isSpawnedPickup_ && isPickupsEnabled_)
 	{
 		commands.push(dropPickupCommand_);
 	}
@@ -267,6 +306,8 @@ void Aircraft::checkProjectileLaunch(sf::Time dt, CommandQueue& commands)
 	if (isLaunchingMissile_)
 	{
 		commands.push(missileCommand_);
+		playLocalSound(commands, SoundEffect::LaunchMissile);
+
 		isLaunchingMissile_ = false;
 	}
 }

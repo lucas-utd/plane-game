@@ -4,9 +4,10 @@
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, world_(*context.window, *context.fonts, *context.sounds)
-	, player_(*context.player)
+	, world_(*context.window, *context.fonts, *context.sounds, false)
+	, player_(nullptr, 1, context.keys1)
 {
+	world_.addAircraft(1);
 	player_.setMissionStatus(Player::MissionRunning);
 
 	// Play game theme
