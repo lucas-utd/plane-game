@@ -15,7 +15,7 @@ class CommandQueue;
 class Player : private sf::NonCopyable
 {
 public:
-	typedef PlayerActions::Action Action;
+	typedef PlayerAction::Type Action;
 
 	enum MissionStatus
 	{

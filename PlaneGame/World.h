@@ -114,7 +114,7 @@ private:
 	sf::Vector2f spawnPosition_;
 	float scrollSpeed_;
 	float scrollSpeedCompensation_;
-	Aircraft* playerAircraft_;
+	std::vector<Aircraft*> playerAircrafts_;
 
 	std::vector<SpawnPoint> enemySpawnPoints_;
 	std::vector<Aircraft*> activeEnemies_;

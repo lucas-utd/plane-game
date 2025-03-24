@@ -16,6 +16,6 @@ public:
 
 private:
 	World world_;
-	Player& player_;
+	Player player_;
 };
 

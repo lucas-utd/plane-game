@@ -85,10 +85,20 @@ void StateStack::applyPendingChanges()
 			break;
 
 		case Action::Pop:
+			stack_.back()->onDestroy();
 			stack_.pop_back();
+			if (!stack_.empty())
+			{
+				stack_.back()->onActivate();
+			}
 			break;
 
 		case Action::Clear:
+			for (auto& state : stack_)
+			{
+				state->onDestroy();
+			}
+
 			stack_.clear();
 			break;
 		}

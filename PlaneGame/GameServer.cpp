@@ -114,7 +114,7 @@ void GameServer::executionThread()
 
 	while (!waitingThreadEnd_)
 	{
-		handleIncomingPacket();
+		handleIncomingPackets();
 		handleIncomingConnections();
 
 		stepTime += stepClock.getElapsedTime();

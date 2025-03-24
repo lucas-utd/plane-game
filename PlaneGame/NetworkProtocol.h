@@ -39,19 +39,19 @@ namespace Client
 	};
 }
 
-namespace PlayerActions
-{
-	enum Action
-	{
-		MoveLeft,
-		MoveRight,
-		MoveUp,
-		MoveDown,
-		Fire,
-		LaunchMissile,
-		ActionCount
-	};
-}
+//namespace PlayerActions
+//{
+//	enum Action
+//	{
+//		MoveLeft,
+//		MoveRight,
+//		MoveUp,
+//		MoveDown,
+//		Fire,
+//		LaunchMissile,
+//		ActionCount
+//	};
+//}
 
 namespace GameActions
 {

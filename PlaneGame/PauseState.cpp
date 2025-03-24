@@ -7,11 +7,12 @@
 #include "Utility.h"
 #include "Button.h"
 
-PauseState::PauseState(StateStack& stack, Context context)
+PauseState::PauseState(StateStack& stack, Context context, bool letUpdatesThrough)
 	: State(stack, context)
 	, backgroundSprite_()
 	, pausedText_()
 	, guiContainer_()
+	, isLetUpdatesThrough_(letUpdatesThrough)
 {
 	sf::Font& font{ context.fonts->get(Fonts::Main) };
 	sf::Vector2f windowSize{ context.window->getSize() };
@@ -66,7 +67,7 @@ void PauseState::draw()
 
 bool PauseState::update(sf::Time dt)
 {
-	return false;
+	return isLetUpdatesThrough_;
 }
 
 bool PauseState::handleEvent(const sf::Event& event)

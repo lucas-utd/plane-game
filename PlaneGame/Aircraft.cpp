@@ -97,6 +97,11 @@ void Aircraft::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 	}
 }
 
+void Aircraft::disablePickups()
+{
+	isPickupsEnabled_ = false;
+}
+
 void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	// Update texts and roll animation

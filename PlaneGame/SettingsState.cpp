@@ -11,12 +11,15 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	backgroundSprite_.setTexture(context.textures->get(Textures::TitleScreen));
 
 	// Build key binding buttons and labels
-	addButtonLabel(Player::MoveLeft, 300.f, "Move Left", context);
-	addButtonLabel(Player::MoveRight, 350.f, "Move Right", context);
-	addButtonLabel(Player::MoveUp, 400.f, "Move Up", context);
-	addButtonLabel(Player::MoveDown, 450.f, "Move Down", context);
-	addButtonLabel(Player::Fire, 500.f, "Fire", context);
-	addButtonLabel(Player::LaunchMissile, 550.f, "Missile", context);
+	for (std::size_t x = 0; x != 2; ++x)
+	{
+		addButtonLabel(PlayerAction::MoveLeft, x, 0, "Move Left", context);
+		addButtonLabel(PlayerAction::MoveRight, x, 1, "Move Right", context);
+		addButtonLabel(PlayerAction::MoveUp, x, 2, "Move Up", context);
+		addButtonLabel(PlayerAction::MoveDown, x, 3, "Move Down", context);
+		addButtonLabel(PlayerAction::Fire, x, 4, "Fire", context);
+		addButtonLabel(PlayerAction::LaunchMissile, x, 5, "Missile", context);
+	}
 
 	updateLabels();
 
@@ -45,16 +48,26 @@ bool SettingsState::handleEvent(const sf::Event& event)
 {
 	bool isKeyBinding = false;
 
-	// Iterate through all binding buttons to see if they are being pressed
-	for (std::size_t action = 0; action != Player::ActionCount; ++action)
+	// Iterate through all binding buttons to see if they are being pressed, waiting for the user to enter a key
+	for (std::size_t i = 0; i != 2 * PlayerAction::Count; ++i)
 	{
-		if (bindingButtons_[action]->isActive())
+		if (bindingButtons_[i]->isActive())
 		{
 			isKeyBinding = true;
 			if (event.type == sf::Event::KeyReleased)
 			{
-				getContext().player->assignKey(static_cast<Player::Action>(action), event.key.code);
-				bindingButtons_[action]->deselect();
+				// Player 1
+				if (i < PlayerAction::Count)
+				{
+					getContext().keys1->assignKey(static_cast<PlayerAction::Type>(i), event.key.code);
+				}
+				// Player 2
+				else
+				{
+					getContext().keys2->assignKey(static_cast<PlayerAction::Type>(i - PlayerAction::Count), event.key.code);
+				}
+
+				bindingButtons_[i]->deselect();
 			}
 			break;
 		}
@@ -75,26 +88,32 @@ bool SettingsState::handleEvent(const sf::Event& event)
 
 void SettingsState::updateLabels()
 {
-	Player& player = *getContext().player;
-
-	for (std::size_t i = 0; i != Player::ActionCount; ++i)
+	for (std::size_t i = 0; i != PlayerAction::Count; ++i)
 	{
-		auto action = static_cast<Player::Action>(i);
-		sf::Keyboard::Key key = player.getAssignedKey(action);
-		bindingLabels_[i]->setText(toString(key));
+		auto action = static_cast<PlayerAction::Type>(i);
+
+		sf::Keyboard::Key key1 = getContext().keys1->getAssignedKey(action);
+		sf::Keyboard::Key key2 = getContext().keys2->getAssignedKey(action);
+
+		bindingLabels_[i]->setText(toString(key1));
+		bindingLabels_[i + PlayerAction::Count]->setText(toString(key2));
+
 	}
 }
 
-void SettingsState::addButtonLabel(Player::Action action, float y, const std::string& text, Context context)
+void SettingsState::addButtonLabel(std::size_t index, std::size_t x, std::size_t y, const std::string& text, Context context)
 {
-	bindingButtons_[action] = std::make_shared<GUI::Button>(context);
-	bindingButtons_[action]->setPosition(80.f, y);
-	bindingButtons_[action]->setText(text);
-	bindingButtons_[action]->setToggle(true);
+	// For x == 0, start at index 0, otherwise start at half of array
+	index += x * PlayerAction::Count;
 
-	bindingLabels_[action] = std::make_shared<GUI::Label>("", *context.fonts);
-	bindingLabels_[action]->setPosition(300.f, y + 15.f);
+	bindingButtons_[index] = std::make_shared<GUI::Button>(context);
+	bindingButtons_[index]->setPosition(400.f * x + 80.f, 50.f * y + 300.f);
+	bindingButtons_[index]->setText(text);
+	bindingButtons_[index]->setToggle(true);
 
-	guiContainer_.pack(bindingButtons_[action]);
-	guiContainer_.pack(bindingLabels_[action]);
+	bindingLabels_[index] = std::make_shared<GUI::Label>("", *context.fonts);
+	bindingLabels_[index]->setPosition(400.f * x + 300.f, 50.f * y + 315.f);
+
+	guiContainer_.pack(bindingButtons_[index]);
+	guiContainer_.pack(bindingLabels_[index]);
 }

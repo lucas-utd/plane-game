@@ -47,7 +47,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 
 	playerInvitationText_.setFont(context.fonts->get(Fonts::Main));
 	playerInvitationText_.setCharacterSize(20);
-	playerInvitationText_.setColor(sf::Color::White);
+	playerInvitationText_.setFillColor(sf::Color::White);
 	playerInvitationText_.setString("Press Enter to spawn player 2");
 	playerInvitationText_.setPosition(100 - playerInvitationText_.getLocalBounds().width, 760 - playerInvitationText_.getLocalBounds().height);
 
@@ -55,7 +55,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 	failedConnectionText_.setFont(context.fonts->get(Fonts::Main));
 	failedConnectionText_.setString("Attempting to connect...");
 	failedConnectionText_.setCharacterSize(35);
-	failedConnectionText_.setColor(sf::Color::White);
+	failedConnectionText_.setFillColor(sf::Color::White);
 	centerOrigin(failedConnectionText_);
 	failedConnectionText_.setPosition(window_.getSize().x / 2.0f, window_.getSize().y / 2.0f);
 
@@ -341,7 +341,7 @@ void MultiplayerGameState::updateBroadcastMessage(sf::Time elapsedTime)
 	}
 }
 
-void MultiplayerGameState::handleEvent(sf::Int32 packetType, sf::Packet& packet)
+void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet)
 {
 	switch (packetType)
 	{
@@ -351,7 +351,7 @@ void MultiplayerGameState::handleEvent(sf::Int32 packetType, sf::Packet& packet)
 		std::string message;
 		packet >> message;
 		broadcasts_.push_back(message);
-		
+
 		// Just added the first message, display immediately
 		if (broadcasts_.size() == 1)
 		{
@@ -362,8 +362,173 @@ void MultiplayerGameState::handleEvent(sf::Int32 packetType, sf::Packet& packet)
 	}
 	break;
 
-	// Spawn a new player
-	default:
-		break;
+	// Sent by the server to order to spawn player 1 airplane on connect
+	case Server::SpawnSelf:
+	{
+		sf::Int32 aircraftIdentifier;
+		sf::Vector2f aircraftPosition;
+		packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y;
+
+		Aircraft* aircraft = world_.addAircraft(aircraftIdentifier);
+		aircraft->setPosition(aircraftPosition);
+
+		players_[aircraftIdentifier].reset(new Player(&socket_, aircraftIdentifier, getContext().keys1));
+		localPlayerIdentifiers_.push_back(aircraftIdentifier);
+
+		isGameStarted_ = true;
+	}
+	break;
+
+	case Server::PlayerConnect:
+	{
+		sf::Int32 aircraftIdentifier;
+		sf::Vector2f aircraftPosition;
+		packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y;
+
+		Aircraft* aircraft = world_.addAircraft(aircraftIdentifier);
+		aircraft->setPosition(aircraftPosition);
+
+		players_[aircraftIdentifier].reset(new Player(&socket_, aircraftIdentifier, nullptr));
+	}
+	break;
+
+	case Server::PlayerDisconnect:
+	{
+		sf::Int32 aircraftIdentifier;
+		packet >> aircraftIdentifier;
+
+		world_.removeAircraft(aircraftIdentifier);
+		players_.erase(aircraftIdentifier);
+	}
+	break;
+
+	case Server::InitialState:
+	{
+		sf::Int32 aircraftCount;
+		float worldHeight;
+		float currentScroll;
+		packet >> worldHeight >> currentScroll;
+
+		world_.setWorldHeight(worldHeight);
+		world_.setCurrentBattleFieldPosition(currentScroll);
+
+		packet >> aircraftCount;
+		for (sf::Int32 i = 0; i < aircraftCount; ++i)
+		{
+			sf::Int32 aircraftIdentifier;
+			sf::Int32 hitpoints;
+			sf::Int32 missileAmmo;
+			sf::Vector2f aircraftPosition;
+			packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y >> hitpoints >> missileAmmo;
+
+			Aircraft* aircraft = world_.addAircraft(aircraftIdentifier);
+			aircraft->setPosition(aircraftPosition);
+			aircraft->setHitpoints(hitpoints);
+			aircraft->setMissileAmmo(missileAmmo);
+
+			players_[aircraftIdentifier].reset(new Player(&socket_, aircraftIdentifier, nullptr));
+		}
+	}
+	break;
+
+	case Server::AcceptCoopPartner:
+	{
+		sf::Int32 aircraftIdentifier;
+		packet >> aircraftIdentifier;
+
+		world_.addAircraft(aircraftIdentifier);
+		players_[aircraftIdentifier].reset(new Player(&socket_, aircraftIdentifier, getContext().keys2));
+		localPlayerIdentifiers_.push_back(aircraftIdentifier);
+	}
+	break;
+
+	// Player event (like missile fired) occurs
+	case Server::PlayerEvent:
+	{
+		sf::Int32 aircraftIdentifier;
+		sf::Int32 action;
+		packet >> aircraftIdentifier >> action;
+
+		auto itr = players_.find(aircraftIdentifier);
+		if (itr != players_.end())
+		{
+			itr->second->handleNetworkEvent(static_cast<Player::Action>(action), world_.getCommandQueue());
+		}
+	}
+	break;
+
+	// Player's movement or fire keyboard state changes
+	case Server::PlayerRealtimeChange:
+	{
+		sf::Int32 aircraftIdentifier;
+		sf::Int32 action;
+		bool actionEnabled;
+		packet >> aircraftIdentifier >> action >> actionEnabled;
+		auto itr = players_.find(aircraftIdentifier);
+		if (itr != players_.end())
+		{
+			itr->second->handleNetworkRealtimeChange(static_cast<Player::Action>(action), actionEnabled);
+		}
+	}
+	break;
+
+	// New enemy to be created
+	case Server::SpawnEnemy:
+	{
+		sf::Int32 enemyType;
+		float height;
+		float relativeX;
+		packet >> enemyType >> height >> relativeX;
+
+		world_.addEnemy(static_cast<Aircraft::Type>(enemyType), relativeX, height);
+		world_.sortEnemies();
+	}
+	break;
+
+	// Mission successfully completed
+	case Server::MissionSuccess:
+	{
+		requestStackPush(States::MissionSuccess);
+	}
+	break;
+
+	// Pickup created
+	case Server::SpawnPickup:
+	{
+		sf::Int32 type;
+		sf::Vector2f position;
+		packet >> type >> position.x >> position.y;
+		world_.createPickup(position, static_cast<Pickup::Type>(type));
+	}
+	break;
+
+	//
+	case Server::UpdateClientState:
+	{
+		float currentWorldPosition;
+		sf::Int32 aircraftCount;
+		packet >> currentWorldPosition >> aircraftCount;
+
+		float currentViewPosition = world_.getViewBounds().top + world_.getViewBounds().height;
+
+		// Set the world's scroll compensation according to the client's position
+		world_.setWorldScrollCompensation(currentViewPosition / currentWorldPosition);
+
+		for (sf::Int32 i = 0; i < aircraftCount; ++i)
+		{
+			sf::Int32 aircraftIdentifier;
+			sf::Vector2f aircraftPosition;
+			packet >> aircraftIdentifier >> aircraftPosition.x >> aircraftPosition.y;
+
+			Aircraft* aircraft = world_.getAircraft(aircraftIdentifier);
+			bool isLocalPlane = std::find(localPlayerIdentifiers_.begin(), localPlayerIdentifiers_.end(), aircraftIdentifier) != localPlayerIdentifiers_.end();
+			if (aircraft && !isLocalPlane)
+			{
+				sf::Vector2f interpolatedPosition = aircraft->getPosition() + (aircraftPosition - aircraft->getPosition()) * 0.1f;
+				aircraft->setPosition(interpolatedPosition);
+			}
+		}
+	}
+	break;
 	}
 }
