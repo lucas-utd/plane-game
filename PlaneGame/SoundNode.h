@@ -11,7 +11,7 @@ public:
 	explicit SoundNode(SoundPlayer& player);
 	void playSound(SoundEffect::ID sound, sf::Vector2f position);
 
-	virtual unsigned int getCategory() const override;
+	virtual Category getCategory() const override;
 
 private:
 	SoundPlayer& sounds_;

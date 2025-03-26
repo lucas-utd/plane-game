@@ -148,7 +148,7 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 	Entity::updateCurrent(dt, commands);
 }
 
-unsigned int Aircraft::getCategory() const
+Category Aircraft::getCategory() const
 {
 	if (isAllied())
 	{

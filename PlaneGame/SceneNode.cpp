@@ -2,7 +2,7 @@
 #include "SceneNode.h"
 
 
-SceneNode::SceneNode(Category::Type category)
+SceneNode::SceneNode(Category category)
 	: children_()
 	, parent_(nullptr)
 	, defaultCategory_(category)
@@ -102,7 +102,7 @@ sf::Transform SceneNode::getWorldTransform() const
 void SceneNode::onCommand(const Command& command, sf::Time dt)
 {
 	// Command current node, if category matches
-	if (command.category & getCategory())
+	if ((command.category & getCategory()) != Category::None)
 	{
 		command.action(*this, dt);
 	}
@@ -114,7 +114,7 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 	}
 }
 
-unsigned int SceneNode::getCategory() const
+Category SceneNode::getCategory() const
 {
 	return defaultCategory_;
 }

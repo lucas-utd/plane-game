@@ -20,7 +20,7 @@ public:
 public:
 	Pickup(Type type, const TextureHolder& textures);
 
-	virtual unsigned int getCategory() const;
+	virtual Category getCategory() const;
 	virtual sf::FloatRect getBoundingRect() const ;
 
 	void apply(Aircraft& player) const;

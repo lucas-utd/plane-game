@@ -14,7 +14,7 @@ public:
 	typedef std::pair<SceneNode*, SceneNode*> Pair;
 
 public:
-	SceneNode(Category::Type category = Category::None);
+	SceneNode(Category category = Category::None);
 
 	void attachChild(Ptr child);
 	Ptr detachChild(const SceneNode& node);
@@ -25,7 +25,7 @@ public:
 	sf::Transform getWorldTransform() const;
 
 	void onCommand(const Command& command, sf::Time dt);
-	virtual unsigned int getCategory() const;
+	virtual Category getCategory() const;
 
 	void checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& collisionPairs);
 	void checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs);
@@ -48,7 +48,7 @@ private:
 private:
 	std::vector<Ptr> children_;
 	SceneNode* parent_;
-	Category::Type defaultCategory_;
+	Category defaultCategory_;
 };
 
 bool collision(const SceneNode& lhs, const SceneNode& rhs);

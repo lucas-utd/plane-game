@@ -14,7 +14,7 @@ struct Command
 	Command();
 
 	Action action;
-	unsigned int category;
+	Category category;
 };
 
 template <typename GameObject, typename Function>

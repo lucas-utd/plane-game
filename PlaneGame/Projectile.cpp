@@ -63,7 +63,7 @@ void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) 
 	target.draw(sprite_, states);
 }
 
-unsigned int Projectile::getCategory() const
+Category Projectile::getCategory() const
 {
 	if (type_ == EnemyBullet)
 		return Category::EnemyAircraft;

@@ -25,7 +25,7 @@ public:
 public:
 	explicit Aircraft(Type type, const TextureHolder& textures, const FontHolder& fonts);
 
-	virtual unsigned int getCategory() const;
+	virtual Category getCategory() const;
 	virtual sf::FloatRect getBoundingRect() const;
 	virtual void remove();
 	virtual bool isMarkedForRemoval() const;

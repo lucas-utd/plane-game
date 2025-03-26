@@ -7,7 +7,7 @@ NetworkNode::NetworkNode()
 {
 }
 
-unsigned int NetworkNode::getCategory() const
+Category NetworkNode::getCategory() const
 {
 	return Category::Network;
 }

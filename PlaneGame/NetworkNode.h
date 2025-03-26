@@ -13,7 +13,7 @@ public:
 	void notifyGameAction(GameActions::Type type, sf::Vector2f position);
 	bool pollGameAction(GameActions::Action& out);
 
-	virtual unsigned int getCategory() const override;
+	virtual Category getCategory() const override;
 
 private:
 	std::queue<GameActions::Action> pendingActions_;

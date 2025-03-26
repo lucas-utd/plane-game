@@ -3,6 +3,7 @@
 #include "Pickup.h"
 #include "ParticleNode.h"
 #include "SoundNode.h"
+#include "Category.h"
 
 
 World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked)
@@ -217,17 +218,17 @@ void World::adaptPlayerVelocity()
 	}
 }
 
-bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
+bool matchesCategories(SceneNode::Pair& colliders, Category type1, Category type2)
 {
-	unsigned int category1 = colliders.first->getCategory();
-	unsigned int category2 = colliders.second->getCategory();
+	Category category1 = colliders.first->getCategory();
+	Category category2 = colliders.second->getCategory();
 
 	// Make sure first pair entry has category type1 and second has type2
-	if (type1 & category1 && type2 & category2)
+	if ((type1 & category1) != Category::None && (type2 & category2) != Category::None)
 	{
 		return true;
 	}
-	else if (type1 & category2 && type2 & category1)
+	else if ((type1 & category2) != Category::None && (type2 & category1) != Category::None)
 	{
 		std::swap(colliders.first, colliders.second);
 		return true;
@@ -308,7 +309,7 @@ void World::buildScene()
 	// Initialize the different layers
 	for (std::size_t i = 0; i != LayerCount; ++i)
 	{
-		Category::Type category = (i == LowerAir) ? Category::SceneAirLayer : Category::None;
+		Category category = (i == LowerAir) ? Category::SceneAirLayer : Category::None;
 
 		SceneNode::Ptr layer = std::make_unique<SceneNode>(category);
 		sceneLayers_[i] = layer.get();

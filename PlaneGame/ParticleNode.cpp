@@ -37,7 +37,7 @@ Particle::Type ParticleNode::getParticleType() const
 	return type_;
 }
 
-unsigned int ParticleNode::getCategory() const
+Category ParticleNode::getCategory() const
 {
 	return Category::ParticleSystem;
 }

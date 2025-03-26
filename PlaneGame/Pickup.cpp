@@ -21,7 +21,7 @@ Pickup::Pickup(Type type, const TextureHolder& textures)
 	centerOrigin(sprite_);
 }
 
-unsigned int Pickup::getCategory() const
+Category Pickup::getCategory() const
 {
 	return Category::Pickup;
 }

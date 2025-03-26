@@ -12,7 +12,7 @@ void SoundNode::playSound(SoundEffect::ID effect, sf::Vector2f position)
 	sounds_.play(effect, position);
 }
 
-unsigned int SoundNode::getCategory() const
+Category SoundNode::getCategory() const
 {
 	return Category::SoundEffect;
 }

@@ -15,7 +15,7 @@ public:
 	
 	void addParticle(sf::Vector2f position);
 	Particle::Type getParticleType() const;
-	virtual unsigned int getCategory() const override;
+	virtual Category getCategory() const override;
 
 private:
 	virtual void updateCurrent(sf::Time dt, CommandQueue& commands) override;
