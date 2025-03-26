@@ -13,12 +13,12 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	// Build key binding buttons and labels
 	for (std::size_t x = 0; x != 2; ++x)
 	{
-		addButtonLabel(PlayerAction::MoveLeft, x, 0, "Move Left", context);
-		addButtonLabel(PlayerAction::MoveRight, x, 1, "Move Right", context);
-		addButtonLabel(PlayerAction::MoveUp, x, 2, "Move Up", context);
-		addButtonLabel(PlayerAction::MoveDown, x, 3, "Move Down", context);
-		addButtonLabel(PlayerAction::Fire, x, 4, "Fire", context);
-		addButtonLabel(PlayerAction::LaunchMissile, x, 5, "Missile", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::MoveLeft), x, 0, "Move Left", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::MoveRight), x, 1, "Move Right", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::MoveUp), x, 2, "Move Up", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::MoveDown), x, 3, "Move Down", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::Fire), x, 4, "Fire", context);
+		addButtonLabel(magic_enum::enum_integer(PlayerAction::LaunchMissile), x, 5, "Missile", context);
 	}
 
 	updateLabels();
@@ -49,7 +49,8 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	bool isKeyBinding = false;
 
 	// Iterate through all binding buttons to see if they are being pressed, waiting for the user to enter a key
-	for (std::size_t i = 0; i != 2 * PlayerAction::Count; ++i)
+	size_t palyerActionCount = magic_enum::enum_count<PlayerAction>();
+	for (std::size_t i = 0; i != 2 * palyerActionCount; ++i)
 	{
 		if (bindingButtons_[i]->isActive())
 		{
@@ -57,14 +58,14 @@ bool SettingsState::handleEvent(const sf::Event& event)
 			if (event.type == sf::Event::KeyReleased)
 			{
 				// Player 1
-				if (i < PlayerAction::Count)
+				if (i < palyerActionCount)
 				{
 					getContext().keys1->assignKey(static_cast<PlayerAction>(i), event.key.code);
 				}
 				// Player 2
 				else
 				{
-					getContext().keys2->assignKey(static_cast<PlayerAction>(i - PlayerAction::Count), event.key.code);
+					getContext().keys2->assignKey(static_cast<PlayerAction>(i - palyerActionCount), event.key.code);
 				}
 
 				bindingButtons_[i]->deselect();
@@ -88,7 +89,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 
 void SettingsState::updateLabels()
 {
-	for (std::size_t i = 0; i != PlayerAction::Count; ++i)
+	for (std::size_t i = 0; i != magic_enum::enum_count<PlayerAction>(); ++i)
 	{
 		auto action = static_cast<PlayerAction>(i);
 
@@ -96,7 +97,7 @@ void SettingsState::updateLabels()
 		sf::Keyboard::Key key2 = getContext().keys2->getAssignedKey(action);
 
 		bindingLabels_[i]->setText(toString(key1));
-		bindingLabels_[i + PlayerAction::Count]->setText(toString(key2));
+		bindingLabels_[i + magic_enum::enum_count<PlayerAction>()]->setText(toString(key2));
 
 	}
 }
@@ -104,7 +105,7 @@ void SettingsState::updateLabels()
 void SettingsState::addButtonLabel(std::size_t index, std::size_t x, std::size_t y, const std::string& text, Context context)
 {
 	// For x == 0, start at index 0, otherwise start at half of array
-	index += x * PlayerAction::Count;
+	index += x * magic_enum::enum_count<PlayerAction>();
 
 	bindingButtons_[index] = std::make_shared<GUI::Button>(context);
 	bindingButtons_[index]->setPosition(400.f * x + 80.f, 50.f * y + 300.f);

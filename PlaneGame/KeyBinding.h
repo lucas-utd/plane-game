@@ -6,7 +6,7 @@
 #include <vector>
 
 
-enum PlayerAction
+enum class PlayerAction
 {
 	MoveLeft,
 	MoveRight,
@@ -14,7 +14,6 @@ enum PlayerAction
 	MoveDown,
 	Fire,
 	LaunchMissile,
-	Count,
 };
 
 class KeyBinding

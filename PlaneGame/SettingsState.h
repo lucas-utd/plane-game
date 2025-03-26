@@ -2,6 +2,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include <magic_enum/magic_enum.hpp>
+
 #include <array>
 
 #include "State.h"
@@ -26,7 +28,9 @@ private:
 private:
 	sf::Sprite backgroundSprite_;
 	GUI::Container guiContainer_;
-	std::array<GUI::Button::Ptr, 2 * PlayerAction::Count> bindingButtons_;
-	std::array<GUI::Label::Ptr, 2 * PlayerAction::Count> bindingLabels_;
+
+private:
+	std::array<GUI::Button::Ptr, 2 * magic_enum::enum_count<PlayerAction>()> bindingButtons_;
+	std::array<GUI::Label::Ptr, 2 * magic_enum::enum_count<PlayerAction>()> bindingLabels_;
 };
 
