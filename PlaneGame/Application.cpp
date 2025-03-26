@@ -13,7 +13,7 @@
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
-	: window_(sf::VideoMode(1024, 768), "Graphics", sf::Style::Close)
+	: window_(sf::VideoMode(1024, 768), "Plane Game", sf::Style::Close)
 	, textures_()
 	, fonts_()
 	, music_()
