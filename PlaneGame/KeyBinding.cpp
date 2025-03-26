@@ -94,7 +94,7 @@ std::vector<KeyBinding::Action> KeyBinding::getRealTimeActions() const
 }
 
 
-bool isRealtimeAction(PlayerAction::Type action)
+bool isRealtimeAction(PlayerAction action)
 {
 	switch (action)
 	{

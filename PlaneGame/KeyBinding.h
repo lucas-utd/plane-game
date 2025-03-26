@@ -6,24 +6,21 @@
 #include <vector>
 
 
-namespace PlayerAction
+enum PlayerAction
 {
-	enum Type
-	{
-		MoveLeft,
-		MoveRight,
-		MoveUp,
-		MoveDown,
-		Fire,
-		LaunchMissile,
-		Count,
-	};
-}
+	MoveLeft,
+	MoveRight,
+	MoveUp,
+	MoveDown,
+	Fire,
+	LaunchMissile,
+	Count,
+};
 
 class KeyBinding
 {
 public:
-	typedef PlayerAction::Type Action;
+	typedef PlayerAction Action;
 
 public:
 	explicit KeyBinding(int controlPreconfiguration);
@@ -41,5 +38,5 @@ private:
 	std::map<sf::Keyboard::Key, Action> keyMap_;
 };
 
-bool isRealtimeAction(PlayerAction::Type action);
+bool isRealtimeAction(PlayerAction action);
 

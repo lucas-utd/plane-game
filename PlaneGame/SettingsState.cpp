@@ -59,12 +59,12 @@ bool SettingsState::handleEvent(const sf::Event& event)
 				// Player 1
 				if (i < PlayerAction::Count)
 				{
-					getContext().keys1->assignKey(static_cast<PlayerAction::Type>(i), event.key.code);
+					getContext().keys1->assignKey(static_cast<PlayerAction>(i), event.key.code);
 				}
 				// Player 2
 				else
 				{
-					getContext().keys2->assignKey(static_cast<PlayerAction::Type>(i - PlayerAction::Count), event.key.code);
+					getContext().keys2->assignKey(static_cast<PlayerAction>(i - PlayerAction::Count), event.key.code);
 				}
 
 				bindingButtons_[i]->deselect();
@@ -90,7 +90,7 @@ void SettingsState::updateLabels()
 {
 	for (std::size_t i = 0; i != PlayerAction::Count; ++i)
 	{
-		auto action = static_cast<PlayerAction::Type>(i);
+		auto action = static_cast<PlayerAction>(i);
 
 		sf::Keyboard::Key key1 = getContext().keys1->getAssignedKey(action);
 		sf::Keyboard::Key key2 = getContext().keys2->getAssignedKey(action);
