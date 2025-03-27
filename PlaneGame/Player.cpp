@@ -86,7 +86,7 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 			if (socket_)
 			{
 				sf::Packet packet;
-				packet << static_cast<sf::Int32>(Client::PlayerEvent);
+				packet << static_cast<sf::Int32>(ClientPacketType::PlayerEvent);
 				packet << identifier_;
 				packet << static_cast<sf::Int32>(action);
 				socket_->send(packet);
@@ -108,7 +108,7 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 		{
 			// Send realtime change to server
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>(Client::PlayerRealtimeChange);
+			packet << static_cast<sf::Int32>(ClientPacketType::PlayerRealtimeChange);
 			packet << identifier_;
 			packet << static_cast<sf::Int32>(action);
 			packet << (event.type == sf::Event::KeyPressed);
@@ -128,7 +128,7 @@ void Player::disableAllRealtimeActions()
 	for (auto& action : actionProxies_)
 	{
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>(Client::PlayerRealtimeChange);
+		packet << static_cast<sf::Int32>(ClientPacketType::PlayerRealtimeChange);
 		packet << identifier_;
 		packet << static_cast<sf::Int32>(action.first);
 		packet << false;

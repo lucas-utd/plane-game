@@ -106,7 +106,7 @@ void MultiplayerGameState::draw()
 		{
 			window_.draw(broadcastText_);
 		}
-		
+
 		if (localPlayerIdentifiers_.size() < 2 && playerInvitationTime_ < sf::seconds(0.5f))
 		{
 			window_.draw(playerInvitationText_);
@@ -129,7 +129,7 @@ void MultiplayerGameState::onDestroy()
 	{
 		// Inform server this client is dying
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>(Client::Quit);
+		packet << static_cast<sf::Int32>(ClientPacketType::Quit);
 
 		socket_.send(packet);
 	}
@@ -221,7 +221,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 		while (world_.pollGameAction(gameAction))
 		{
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>(Client::GameEvent);
+			packet << static_cast<sf::Int32>(ClientPacketType::GameEvent);
 			packet << static_cast<sf::Int32>(gameAction.type);
 			packet << gameAction.position.x;
 			packet << gameAction.position.y;
@@ -234,7 +234,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 		if (tickClock_.getElapsedTime() > sf::seconds(1.f / 20.f))
 		{
 			sf::Packet positionUpdatePacket;
-			positionUpdatePacket << static_cast<sf::Int32>(Client::PositionUpdate);
+			positionUpdatePacket << static_cast<sf::Int32>(ClientPacketType::PositionUpdate);
 			positionUpdatePacket << static_cast<sf::Int32>(localPlayerIdentifiers_.size());
 
 			for (const auto& identifier : localPlayerIdentifiers_)
@@ -293,7 +293,7 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 		if (event.key.code == sf::Keyboard::Return && localPlayerIdentifiers_.size() == 1)
 		{
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>(Client::RequestCoopPartner);
+			packet << static_cast<sf::Int32>(ClientPacketType::RequestCoopPartner);
 
 			socket_.send(packet);
 		}
@@ -343,10 +343,10 @@ void MultiplayerGameState::updateBroadcastMessage(sf::Time elapsedTime)
 
 void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet)
 {
-	switch (packetType)
+	switch (static_cast<ServerPacketType>(packetType))
 	{
 		// Send message to all clients
-	case Server::BroadcastMessage:
+	case ServerPacketType::BroadcastMessage:
 	{
 		std::string message;
 		packet >> message;
@@ -363,7 +363,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	// Sent by the server to order to spawn player 1 airplane on connect
-	case Server::SpawnSelf:
+	case ServerPacketType::SpawnSelf:
 	{
 		sf::Int32 aircraftIdentifier;
 		sf::Vector2f aircraftPosition;
@@ -379,7 +379,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	}
 	break;
 
-	case Server::PlayerConnect:
+	case ServerPacketType::PlayerConnect:
 	{
 		sf::Int32 aircraftIdentifier;
 		sf::Vector2f aircraftPosition;
@@ -392,7 +392,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	}
 	break;
 
-	case Server::PlayerDisconnect:
+	case ServerPacketType::PlayerDisconnect:
 	{
 		sf::Int32 aircraftIdentifier;
 		packet >> aircraftIdentifier;
@@ -402,7 +402,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	}
 	break;
 
-	case Server::InitialState:
+	case ServerPacketType::InitialState:
 	{
 		sf::Int32 aircraftCount;
 		float worldHeight;
@@ -431,7 +431,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	}
 	break;
 
-	case Server::AcceptCoopPartner:
+	case ServerPacketType::AcceptCoopPartner:
 	{
 		sf::Int32 aircraftIdentifier;
 		packet >> aircraftIdentifier;
@@ -443,7 +443,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	// Player event (like missile fired) occurs
-	case Server::PlayerEvent:
+	case ServerPacketType::PlayerEvent:
 	{
 		sf::Int32 aircraftIdentifier;
 		sf::Int32 action;
@@ -458,7 +458,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	// Player's movement or fire keyboard state changes
-	case Server::PlayerRealtimeChange:
+	case ServerPacketType::PlayerRealtimeChange:
 	{
 		sf::Int32 aircraftIdentifier;
 		sf::Int32 action;
@@ -473,7 +473,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	// New enemy to be created
-	case Server::SpawnEnemy:
+	case ServerPacketType::SpawnEnemy:
 	{
 		sf::Int32 enemyType;
 		float height;
@@ -486,14 +486,14 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	// Mission successfully completed
-	case Server::MissionSuccess:
+	case ServerPacketType::MissionSuccess:
 	{
 		requestStackPush(States::MissionSuccess);
 	}
 	break;
 
 	// Pickup created
-	case Server::SpawnPickup:
+	case ServerPacketType::SpawnPickup:
 	{
 		sf::Int32 type;
 		sf::Vector2f position;
@@ -503,7 +503,7 @@ void MultiplayerGameState::handlePacket(sf::Int32 packetType, sf::Packet& packet
 	break;
 
 	//
-	case Server::UpdateClientState:
+	case ServerPacketType::UpdateClientState:
 	{
 		float currentWorldPosition;
 		sf::Int32 aircraftCount;

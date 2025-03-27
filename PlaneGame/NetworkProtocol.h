@@ -5,53 +5,33 @@
 
 const unsigned short ServerPort = 5000;
 
-namespace Server
+// Packets originated in the server
+enum class ServerPacketType
 {
-	// Packets originated in the server
-	enum PacketType
-	{
-		BroadcastMessage,	// format: [Int32:packetType] [string:message]
-		SpawnSelf,			// format: [Int32:packetType]
-		InitialState,
-		PlayerEvent,
-		PlayerRealtimeChange,
-		PlayerConnect,
-		PlayerDisconnect,
-		AcceptCoopPartner,
-		SpawnEnemy,
-		SpawnPickup,
-		UpdateClientState,
-		MissionSuccess
-	};
-}
+	BroadcastMessage,	// format: [Int32:packetType] [string:message]
+	SpawnSelf,			// format: [Int32:packetType]
+	InitialState,
+	PlayerEvent,
+	PlayerRealtimeChange,
+	PlayerConnect,
+	PlayerDisconnect,
+	AcceptCoopPartner,
+	SpawnEnemy,
+	SpawnPickup,
+	UpdateClientState,
+	MissionSuccess
+};
 
-namespace Client
+// Packets originated in the client
+enum class ClientPacketType
 {
-	// Packets originated in the client
-	enum PacketType
-	{
-		PlayerEvent,
-		PlayerRealtimeChange,
-		RequestCoopPartner,
-		PositionUpdate,
-		GameEvent,
-		Quit
-	};
-}
-
-//namespace PlayerActions
-//{
-//	enum Action
-//	{
-//		MoveLeft,
-//		MoveRight,
-//		MoveUp,
-//		MoveDown,
-//		Fire,
-//		LaunchMissile,
-//		ActionCount
-//	};
-//}
+	PlayerEvent,
+	PlayerRealtimeChange,
+	RequestCoopPartner,
+	PositionUpdate,
+	GameEvent,
+	Quit
+};
 
 namespace GameActions
 {
