@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics/Shader.hpp> // Include Shader header
+
+#include "ResourceHolder.h"
 
 // Forward declaration of SFML classes
 namespace sf
@@ -54,8 +57,8 @@ enum class Music
 
 
 // Forward declaration and a few type definitions
-template <typename Resource, typename Identifier>
-class ResourceHolder;
+//template <typename Resource, typename Identifier>
+//class ResourceHolder;
 
 
 // Typedefs for ResourceHolder

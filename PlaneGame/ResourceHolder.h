@@ -5,14 +5,31 @@
 #include <cassert>
 
 
-template <typename Resource, typename Identifier>
+// Concept for ensuring the resource has a loadFromFile function
+template <typename T>
+concept LoadableResource = requires(T t, const std::string & filename)
+{
+	{ t.loadFromFile(filename) }->std::convertible_to<bool>;
+} ||
+ requires(T t, const std::string & filename, const std::string& secondArg)
+{
+	{ t.loadFromFile(filename, secondArg) }->std::convertible_to<bool>;
+};
+
+// Concept for ensuring the identifier is usable as a key in a map
+template <typename T>
+concept MapKey = requires(T t)
+{
+	{ std::declval<std::map<T, int>>().find(t) };
+};
+
+template <LoadableResource Resource, MapKey Identifier>
 class ResourceHolder
 {
 public:
 	void load(Identifier id, const std::string& filename);
 
-	template <typename Parameter>
-	void load(Identifier id, const std::string& filename, const Parameter& secondParam);
+	void load(Identifier id, const std::string& filename, const std::string& secondParam);
 
 	Resource& get(Identifier id);
 	const Resource& get(Identifier id) const;
