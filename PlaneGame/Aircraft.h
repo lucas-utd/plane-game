@@ -39,7 +39,7 @@ public:
 
 	void fire();
 	void launchMissile();
-	void playLocalSound(CommandQueue& commands, SoundEffect::ID effect);
+	void playLocalSound(CommandQueue& commands, SoundEffect effect);
 	int getIdentifier() const;
 	void setIdentifier(int identifier);
 	int getMissileAmmo() const;

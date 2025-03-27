@@ -31,12 +31,12 @@ SoundPlayer::SoundPlayer()
 	sf::Listener::setDirection(0.f, 0.f, -1.f);
 }
 
-void SoundPlayer::play(SoundEffect::ID effect)
+void SoundPlayer::play(SoundEffect effect)
 {
 	play(effect, getListenerPosition());
 }
 
-void SoundPlayer::play(SoundEffect::ID effect, sf::Vector2f position)
+void SoundPlayer::play(SoundEffect effect, sf::Vector2f position)
 {
 	sounds_.push_back(sf::Sound());
 	sf::Sound& sound = sounds_.back();

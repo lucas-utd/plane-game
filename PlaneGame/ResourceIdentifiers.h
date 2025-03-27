@@ -11,61 +11,47 @@ namespace sf
 	class SoundBuffer;
 }
 
-namespace Textures
+enum class Textures
 {
-	enum ID
-	{
-		Entities,
-		Jungle,
-		TitleScreen,
-		Buttons,
-		Explosion,
-		Particle,
-		FinishLine,
-	};
-}
+	Entities,
+	Jungle,
+	TitleScreen,
+	Buttons,
+	Explosion,
+	Particle,
+	FinishLine,
+};
 
-namespace Shaders
+enum class Shaders
 {
-	enum ID
-	{
-		BrightnessPass,
-		DownSamplePass,
-		GaussianBlurPass,
-		AddPass,
-	};
-}
+	BrightnessPass,
+	DownSamplePass,
+	GaussianBlurPass,
+	AddPass,
+};
 
-namespace Fonts
+enum class Fonts
 {
-	enum ID
-	{
-		Main,
-	};
-}
+	Main,
+};
 
-namespace SoundEffect
+enum class SoundEffect
 {
-	enum ID
-	{
-		AlliedGunfire,
-		EnemyGunfire,
-		Explosion1,
-		Explosion2,
-		LaunchMissile,
-		CollectPickup,
-		Button,
-	};
-}
+	AlliedGunfire,
+	EnemyGunfire,
+	Explosion1,
+	Explosion2,
+	LaunchMissile,
+	CollectPickup,
+	Button,
+};
 
-namespace Music
+enum Music
 {
-	enum ID
-	{
-		MenuTheme,
-		MissionTheme,
-	};
-}
+	MenuTheme,
+	MissionTheme,
+};
+
 
 // Forward declaration and a few type definitions
 template <typename Resource, typename Identifier>
@@ -73,7 +59,7 @@ class ResourceHolder;
 
 
 // Typedefs for ResourceHolder
-typedef ResourceHolder<sf::Texture, Textures::ID>			TextureHolder;
-typedef ResourceHolder<sf::Font, Fonts::ID>					FontHolder;
-typedef ResourceHolder<sf::Shader, Shaders::ID>				ShaderHolder;
-typedef ResourceHolder<sf::SoundBuffer, SoundEffect::ID>	SoundBufferHolder;
+typedef ResourceHolder<sf::Texture, Textures>			TextureHolder;
+typedef ResourceHolder<sf::Font, Fonts>					FontHolder;
+typedef ResourceHolder<sf::Shader, Shaders>				ShaderHolder;
+typedef ResourceHolder<sf::SoundBuffer, SoundEffect>	SoundBufferHolder;

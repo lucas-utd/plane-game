@@ -117,7 +117,7 @@ void Aircraft::updateCurrent(sf::Time dt, CommandQueue& commands)
 		// Play explosion sound only once
 		if (!isExplosionBegin_)
 		{
-			SoundEffect::ID soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
+			SoundEffect soundEffect = (randomInt(2) == 0) ? SoundEffect::Explosion1 : SoundEffect::Explosion2;
 			playLocalSound(commands, soundEffect);
 
 			// Emit network game action for enemy explosions
@@ -225,7 +225,7 @@ void Aircraft::launchMissile()
 	}
 }
 
-void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect::ID effect)
+void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect effect)
 {
 	sf::Vector2f worldPosition = getWorldPosition();
 

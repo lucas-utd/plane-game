@@ -10,7 +10,7 @@ MusicPlayer::MusicPlayer()
 	filenames_[Music::MissionTheme] = "Media/Music/MissionTheme.ogg";
 }
 
-void MusicPlayer::play(Music::ID theme)
+void MusicPlayer::play(Music theme)
 {
 	std::string filename = filenames_[theme];
 

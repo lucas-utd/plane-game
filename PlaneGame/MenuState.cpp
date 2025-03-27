@@ -10,7 +10,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	: State(stack, context)
 	, guiContainer_()
 {
-	sf::Texture& texture = context.textures->get(Textures::ID::TitleScreen);
+	sf::Texture& texture = context.textures->get(Textures::TitleScreen);
 	backgroundSprite_.setTexture(texture);
 
 	auto playButton = std::make_shared<GUI::Button>(context);
@@ -43,7 +43,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 	guiContainer_.pack(exitButton);
 
 	// Play menu theme
-	context.music->play(Music::ID::MenuTheme);
+	context.music->play(Music::MenuTheme);
 }
 
 void MenuState::draw()

@@ -7,7 +7,7 @@ SoundNode::SoundNode(SoundPlayer& player)
 {
 }
 
-void SoundNode::playSound(SoundEffect::ID effect, sf::Vector2f position)
+void SoundNode::playSound(SoundEffect effect, sf::Vector2f position)
 {
 	sounds_.play(effect, position);
 }
