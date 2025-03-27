@@ -33,16 +33,16 @@ public:
 	explicit StateStack(State::Context context);
 
 	template <typename T>
-	void registerState(States::ID stateID);
+	void registerState(States stateID);
 
 	template <typename T, typename Param1>
-	void registerState(States::ID stateID, Param1 param1);
+	void registerState(States stateID, Param1 param1);
 
 	void update(sf::Time dt);
 	void draw();
 	void handleEvent(const sf::Event& event);
 
-	void pushState(States::ID stateID);
+	void pushState(States stateID);
 	void popState();
 	void clearStates();
 
@@ -50,16 +50,16 @@ public:
 
 
 private:
-	State::Ptr createState(States::ID stateID);
+	State::Ptr createState(States stateID);
 	void applyPendingChanges();
 
 private:
 	struct PendingChange
 	{
-		explicit PendingChange(Action action, States::ID stateID = States::ID::None);
+		explicit PendingChange(Action action, States stateID = States::None);
 
 		Action action;
-		States::ID stateID;
+		States stateID;
 	};
 
 private:
@@ -67,11 +67,11 @@ private:
 	std::vector<PendingChange> pendingList_;
 
 	State::Context context_;
-	std::map<States::ID, std::function<State::Ptr()>> factories_;
+	std::map<States, std::function<State::Ptr()>> factories_;
 };
 
 template <typename T>
-void StateStack::registerState(States::ID stateID)
+void StateStack::registerState(States stateID)
 {
 	factories_[stateID] = [this]()
 		{
@@ -80,7 +80,7 @@ void StateStack::registerState(States::ID stateID)
 }
 
 template <typename T, typename Param1>
-void StateStack::registerState(States::ID stateID, Param1 arg1)
+void StateStack::registerState(States stateID, Param1 arg1)
 {
 	factories_[stateID] = [this, arg1]()
 		{

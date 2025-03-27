@@ -56,7 +56,7 @@ bool LoadingState::update(sf::Time dt)
 	if (loadingTask_.isFinished())
 	{
 		requestStackPop();
-		requestStackPush(States::ID::Game);
+		requestStackPush(States::Game);
 	}
 	else
 	{

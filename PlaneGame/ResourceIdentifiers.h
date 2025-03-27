@@ -46,7 +46,7 @@ enum class SoundEffect
 	Button,
 };
 
-enum Music
+enum class Music
 {
 	MenuTheme,
 	MissionTheme,

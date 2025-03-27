@@ -45,7 +45,7 @@ void StateStack::handleEvent(const sf::Event& event)
 	applyPendingChanges();
 }
 
-void StateStack::pushState(States::ID stateID)
+void StateStack::pushState(States stateID)
 {
 	pendingList_.push_back(PendingChange(Action::Push, stateID));
 }
@@ -65,7 +65,7 @@ bool StateStack::isEmpty() const
 	return stack_.empty();
 }
 
-State::Ptr StateStack::createState(States::ID stateID)
+State::Ptr StateStack::createState(States stateID)
 {
 	auto found = factories_.find(stateID);
 	std::ostringstream message;
@@ -107,7 +107,7 @@ void StateStack::applyPendingChanges()
 	pendingList_.clear();
 }
 
-StateStack::PendingChange::PendingChange(Action action, States::ID stateID)
+StateStack::PendingChange::PendingChange(Action action, States stateID)
 	: action(action)
 	, stateID(stateID)
 {

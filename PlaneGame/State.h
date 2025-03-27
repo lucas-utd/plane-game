@@ -51,7 +51,7 @@ public:
 	virtual void onDestroy();
 
 protected:
-	void requestStackPush(States::ID stateID);
+	void requestStackPush(States stateID);
 	void requestStackPop();
 	void requestStateClear();
 
