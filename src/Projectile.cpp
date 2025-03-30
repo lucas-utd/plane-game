@@ -1,3 +1,6 @@
+#include <cmath>
+
+
 #include <SFML/Graphics/RenderTarget.hpp>
 
 

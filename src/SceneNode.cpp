@@ -1,4 +1,6 @@
 #include <cassert>
+#include <limits>
+#include <cmath>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

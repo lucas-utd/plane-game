@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "SpriteNode.h"
 #include "World.h"
 #include "Pickup.h"
