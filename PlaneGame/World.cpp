@@ -54,11 +54,12 @@ void World::update(sf::Time dt)
 	destroyEntitiesOutsideView();
 	guideMissiles();
 
-	// Forward commands to scene graph
+	// Forward commands to scene graph, adapt player velocity
 	while (!commandQueue_.isEmpty())
 	{
 		sceneGraph_.onCommand(commandQueue_.pop(), dt);
 	}
+
 	// Adapt player velocity
 	adaptPlayerVelocity();
 
@@ -122,13 +123,14 @@ void World::removeAircraft(int identifier)
 	if (aircraft)
 	{
 		aircraft->destroy();
+		playerAircrafts_.erase(std::find(playerAircrafts_.begin(), playerAircrafts_.end(), aircraft));
 	}
 }
 
 Aircraft* World::addAircraft(int identifier)
 {
-	std::unique_ptr<Aircraft> player(new Aircraft(Aircraft::Eagle, textures_, fonts_));
-	player->setPosition(spawnPosition_);
+	std::unique_ptr<Aircraft> player = std::make_unique<Aircraft>(Aircraft::Eagle, textures_, fonts_);
+	player->setPosition(worldView_.getCenter());
 	player->setIdentifier(identifier);
 
 	playerAircrafts_.push_back(player.get());
@@ -138,7 +140,7 @@ Aircraft* World::addAircraft(int identifier)
 
 void World::createPickup(sf::Vector2f position, Pickup::Type type)
 {
-	std::unique_ptr<Pickup> pickup(new Pickup(type, textures_));
+	std::unique_ptr<Pickup> pickup = std::make_unique<Pickup>(type, textures_);
 	pickup->setPosition(position);
 	pickup->setVelocity(0.f, 1.f);
 	sceneLayers_[UpperAir]->attachChild(std::move(pickup));
@@ -290,7 +292,7 @@ void World::updateSounds()
 	else
 	{
 		// 1 or more players -> average position of all aircrafts
-		for (auto& aircraft : playerAircrafts_)
+		for (const auto& aircraft : playerAircrafts_)
 		{
 			listenerPosition += aircraft->getWorldPosition();
 		}
@@ -338,21 +340,21 @@ void World::buildScene()
 	sceneLayers_[Background]->attachChild(std::move(finishSprite));
 
 	// Add particle node to the scene
-	std::unique_ptr<ParticleNode> smokeNode{ std::make_unique<ParticleNode>(Particle::Smoke, textures_) };
+	std::unique_ptr<ParticleNode> smokeNode = std::make_unique<ParticleNode>(Particle::Smoke, textures_);
 	sceneLayers_[LowerAir]->attachChild(std::move(smokeNode));
 
 	// Add propellant particle node to the scene
-	std::unique_ptr<ParticleNode> propellantNode{ std::make_unique<ParticleNode>(Particle::Propellant, textures_) };
+	std::unique_ptr<ParticleNode> propellantNode = std::make_unique<ParticleNode>(Particle::Propellant, textures_);
 	sceneLayers_[LowerAir]->attachChild(std::move(propellantNode));
 
 	// Add sound effect node
-	std::unique_ptr<SoundNode> soundNode{ std::make_unique<SoundNode>(sounds_) };
+	std::unique_ptr<SoundNode> soundNode = std::make_unique<SoundNode>(sounds_);
 	sceneGraph_.attachChild(std::move(soundNode));
 
 	// Add network node, if necessary
 	if (networkNode_)
 	{
-		std::unique_ptr<NetworkNode> networkNode{ std::make_unique<NetworkNode>() };
+		std::unique_ptr<NetworkNode> networkNode = std::make_unique<NetworkNode>();
 		networkNode_ = networkNode.get();
 		sceneGraph_.attachChild(std::move(networkNode));
 	}
@@ -421,10 +423,9 @@ void World::spawnEnemies()
 	{
 		SpawnPoint spawn = enemySpawnPoints_.back();
 
-		std::unique_ptr<Aircraft> enemy{ std::make_unique<Aircraft>(spawn.type, textures_, fonts_) };
+		std::unique_ptr<Aircraft> enemy = std::make_unique<Aircraft>(spawn.type, textures_, fonts_);
 		enemy->setPosition(spawn.x, spawn.y);
 		enemy->setRotation(180.f);
-
 		if (networkedWorld)
 		{
 			enemy->disablePickups();

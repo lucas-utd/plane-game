@@ -1,4 +1,7 @@
 #pragma once
+
+#include <SFML/Graphics/Sprite.hpp>
+
 #include "SceneNode.h"
 
 class SpriteNode : public SceneNode

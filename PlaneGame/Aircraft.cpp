@@ -1,3 +1,7 @@
+#include <cmath>
+
+#include <SFML/Graphics/RenderTarget.hpp>
+
 #include "Aircraft.h"
 #include "ResourceHolder.h"
 #include "ResourceIdentifiers.h"
@@ -5,9 +9,8 @@
 #include "DataTables.h"
 #include "Pickup.h"
 #include "SoundNode.h"
-
-#include <cmath>
 #include "NetworkNode.h"
+
 
 namespace
 {

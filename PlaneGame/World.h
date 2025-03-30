@@ -1,9 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <array>
 #include <memory>
 #include <vector>
+
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -34,7 +34,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked = false);
+	World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked = false);
 	void update(sf::Time dt);
 	void draw();
 

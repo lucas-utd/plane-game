@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 
 #include "SceneNode.h"
 #include "CommandQueue.h"
@@ -21,11 +20,11 @@ public:
 	void damage(int points);
 	void destroy();
 	virtual void remove();
-	bool isDestroyed() const;
+	virtual bool isDestroyed() const;
 
 
 protected:
-	virtual void updateCurrent(sf::Time dt, CommandQueue& commands);
+	virtual void updateCurrent(sf::Time dt, CommandQueue& commands) override;
 
 private:
 	sf::Vector2f velocity_;

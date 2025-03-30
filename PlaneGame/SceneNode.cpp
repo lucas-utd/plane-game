@@ -1,5 +1,10 @@
 #include <cassert>
+
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+
 #include "SceneNode.h"
+#include "Command.h"
 
 
 SceneNode::SceneNode(Category category)
@@ -48,6 +53,7 @@ void SceneNode::updateChildren(sf::Time dt, CommandQueue& commands)
 
 void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	// Apply transform of current node
 	states.transform *= getTransform();
 
 	// Draw node and children with changed transform
@@ -73,7 +79,7 @@ void SceneNode::drawBoundingRect(sf::RenderTarget& target, sf::RenderStates stat
 	sf::FloatRect rect = getBoundingRect();
 
 	sf::RectangleShape shape;
-	shape.setPosition(rect.left, rect.top);
+	shape.setPosition(sf::Vector2f(rect.left, rect.top));
 	shape.setSize(sf::Vector2f(rect.width, rect.height));
 	shape.setFillColor(sf::Color::Transparent);
 	shape.setOutlineColor(sf::Color::Green);
@@ -124,11 +130,11 @@ void SceneNode::checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& colli
 	checkNodeCollision(sceneGraph, collisionPairs);
 	for (const Ptr& child : sceneGraph.children_)
 	{
-		checkNodeCollision(*child, collisionPairs);
+		checkSceneCollision(*child, collisionPairs);
 	}
 }
 
-void SceneNode::checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs) 
+void SceneNode::checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs)
 {
 	if (this != &node && collision(*this, node) && !isDestroyed() && !node.isDestroyed())
 	{
@@ -142,6 +148,7 @@ void SceneNode::checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPai
 
 void SceneNode::removeWrecks()
 {
+	// Remove all children which request to
 	auto wreckFieldBegin = std::remove_if(children_.begin(), children_.end(), std::mem_fn(&SceneNode::isMarkedForRemoval));
 	children_.erase(wreckFieldBegin, children_.end());
 

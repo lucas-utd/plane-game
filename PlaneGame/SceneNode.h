@@ -1,20 +1,27 @@
 #pragma once
+
 #include <memory>
 #include <vector>
-#include <SFML/Graphics.hpp>
-#include "Command.h"
 #include <set>
+#include <utility>
+
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/System/Time.hpp>
+
+#include "Category.h"
 #include "CommandQueue.h"
 
-class SceneNode : public sf::Transformable, public sf::Drawable,
-	private sf::NonCopyable
+
+class SceneNode : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
 {
 public:
 	typedef std::unique_ptr<SceneNode> Ptr;
 	typedef std::pair<SceneNode*, SceneNode*> Pair;
 
 public:
-	SceneNode(Category category = Category::None);
+	explicit SceneNode(Category category = Category::None);
 
 	void attachChild(Ptr child);
 	Ptr detachChild(const SceneNode& node);
