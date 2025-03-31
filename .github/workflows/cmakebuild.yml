@@ -40,7 +40,7 @@ jobs:
 
     - name: Install Dependencies (Ubuntu)
       if: runner.os == 'Linux'
-      run: sudo apt update && sudo apt install -y cmake g++ ninja-build git
+      run: sudo apt update && sudo apt install -y cmake g++ ninja-build git libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
