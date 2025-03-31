@@ -91,5 +91,9 @@ jobs:
 
     - name: Configure CMake with vcpkg
       run: |
-        cmake --preset default
+        cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build \
+          -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake \
+          -VCPKG_TARGET_ARCHITECTURE=x64 \
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         cmake --build build --config ${{ env.BUILD_CONFIGURATION }}
