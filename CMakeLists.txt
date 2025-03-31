@@ -63,7 +63,6 @@ target_include_directories(PlaneGame PRIVATE
 if (MSVC)
     target_compile_options(PlaneGame PRIVATE
         /W4
-        /WX
         /permissive-
     )
 else()
