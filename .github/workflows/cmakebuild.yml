@@ -103,7 +103,7 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build `
-          -DCMAKE_TOOLCHAIN_FILE='C:\vcpkg\scripts\buildsystems\vcpkg.cmake' `
+          -DCMAKE_TOOLCHAIN_FILE='C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
           -DVCPKG_TARGET_ARCHITECTURE=x64 `
           -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} `
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
