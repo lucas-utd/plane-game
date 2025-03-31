@@ -44,9 +44,7 @@ jobs:
 
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
-      uses: seanmiddleditch/gha-setup-ninja@v6
-      with:
-        version: latest
+      uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Set up the cache for CMake (Linux)
       if: runner.os == 'Linux'
