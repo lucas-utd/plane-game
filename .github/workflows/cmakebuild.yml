@@ -102,9 +102,9 @@ jobs:
     - name: Configure CMake with vcpkg (Windows)
       if: runner.os == 'Windows'
       run: |
-        cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build \
-          -DCMAKE_TOOLCHAIN_FILE='C:/vcpkg/scripts/buildsystems/vcpkg.cmake' \
-          -DVCPKG_TARGET_ARCHITECTURE=x64 \
-          -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} \
+        cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build `
+          -DCMAKE_TOOLCHAIN_FILE='C:\vcpkg\scripts\buildsystems\vcpkg.cmake' `
+          -DVCPKG_TARGET_ARCHITECTURE=x64 `
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} `
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         cmake --build build --config ${{ env.BUILD_CONFIGURATION }}
