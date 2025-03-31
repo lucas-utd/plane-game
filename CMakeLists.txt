@@ -83,9 +83,10 @@ set_target_properties(PlaneGame PROPERTIES
 # Line the SFML and magic enum libraries
 target_link_libraries(PlaneGame sfml-system sfml-network sfml-graphics sfml-window sfml-audio magic_enum::magic_enum)
 
-
 # Set the output directory for the executable
 set_target_properties(PlaneGame PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
 )
 
+# Copy the Media directory to the output directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Media DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
