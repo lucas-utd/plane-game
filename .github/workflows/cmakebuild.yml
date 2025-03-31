@@ -44,15 +44,15 @@ jobs:
 
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
-      run: |
-        choco install cmake ninja -y
-        choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools" -y
+      uses: seanmiddleditch/gha-setup-ninja@v6
+      with:
+        version: latest
 
     - name: Set up the cache for CMake (Linux)
       if: runner.os == 'Linux'
       uses: actions/cache@v4
       with:
-        path: ~/.cache/vcpkg
+        path: ~/vcpkg
         key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
         restore-keys: |
             vcpkg-${{ runner.os }}-
