@@ -6,7 +6,7 @@
 #include "ParticleNode.h"
 #include "SoundNode.h"
 #include "Category.h"
-#include "ResourceIdentifier.h"
+#include "ResourceIdentifiers.h"
 
 
 World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked)
