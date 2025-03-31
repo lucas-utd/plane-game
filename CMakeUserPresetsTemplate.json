@@ -1,0 +1,66 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "x64-debug",
+            "displayName": "x64 Debug",
+            "inherits": "default",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "VCPKG_ROOT": ""
+            }
+        },
+        {
+            "name": "x64-release",
+            "displayName": "x64 Release",
+            "inherits": "x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "x64-debug",
+            "configurePreset": "x64-debug"
+        },
+        {
+            "name": "x64-release",
+            "configurePreset": "x64-release"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "x64-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "x64-debug"
+                }
+            ]
+        },
+        {
+            "name": "x64-release",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x64-release"
+                },
+                {
+                    "type": "build",
+                    "name": "x64-release"
+                }
+            ]
+        }
+    ]
+}
