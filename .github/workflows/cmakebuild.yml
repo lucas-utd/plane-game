@@ -68,7 +68,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         # Check if vcpkg is already installed
-        if [ ! -d "~/vcpkg" ]; then
+        if [ ! -d "$HOME/vcpkg" ]; then
           echo "VCPKG not found, installing..."
           git clone https://github.com/microsoft/vcpkg.git ~/vcpkg
           cd ~/vcpkg
