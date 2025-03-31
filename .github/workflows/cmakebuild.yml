@@ -28,6 +28,9 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
+        vcpkg_root:
+          - ubuntu-latest: $HOME/vcpkg
+          - windows-latest: C:\vcpkg
       fail-fast: false
     runs-on: ${{ matrix.os}}
 
@@ -41,7 +44,9 @@ jobs:
 
     - name: Install Dependencies (Windows)
       if: runner.os == 'Windows'
-      run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+      run: |
+        choco install cmake ninja -y
+        choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools" -y
 
     - name: Set up the cache for CMake (Linux)
       if: runner.os == 'Linux'
@@ -81,15 +86,10 @@ jobs:
           C:\vcpkg\bootstrap-vcpkg.bat
         }
 
-    - name: Set VCPKG_ROOT for Ubuntu
-      if: runner.os == 'Linux'
-      run: echo "VCPKG_ROOT=$HOME/vcpkg" >> $GITHUB_ENV
-
-    - name: Set VCPKG_ROOT for Windows
-      if: runner.os == 'Windows'
-      run: echo "VCPKG_ROOT=C:\vcpkg" >> $GITHUB_ENV
-
+    - name: Set VCPKG_ROOT
+      run: echo "VCPKG_ROOT=${{ matrix.vcpkg_root }}" >> $GITHUB_ENV
 
     - name: Configure CMake with vcpkg
       run: |
-        cmake --workflow --preset x64-release
+        cmake --preset x64-release
+        cmake --build build --config ${{ env.BUILD_CONFIGURATION }}

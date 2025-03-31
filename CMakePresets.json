@@ -2,8 +2,8 @@
     "version": 6,
     "configurePresets": [
         {
-            "name": "vcpkg",
-            "hidden": true,
+            "name": "default",
+            "hidden": false,
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "architecture": {
