@@ -270,8 +270,8 @@ void World::handleCollisions()
 			pickup.destroy();
 			player.playLocalSound(commandQueue_, SoundEffect::CollectPickup);
 		}
-		else if (matchesCategories(pair, Category::EnemyAircraft, Category::AlliedAircraft)
-			|| matchesCategories(pair, Category::PlayerAircraft, Category::EnemyAircraft))
+		else if (matchesCategories(pair, Category::EnemyAircraft, Category::AlliedProjectile)
+			|| matchesCategories(pair, Category::PlayerAircraft, Category::EnemyProjectile))
 		{
 			auto& aircraft = static_cast<Aircraft&>(*pair.first);
 			auto& projectile = static_cast<Projectile&>(*pair.second);
