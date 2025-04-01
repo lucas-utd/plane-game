@@ -1,10 +1,10 @@
 #pragma once
 
+#include <map>
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Network/TcpSocket.hpp>
-
-#include <map>
 
 #include "Command.h"
 #include "KeyBinding.h"
@@ -23,7 +23,6 @@ public:
 		MissionSuccess,
 		MissionFailure
 	};
-
 
 
 public:

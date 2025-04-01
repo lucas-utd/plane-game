@@ -19,7 +19,10 @@ struct AircraftMover
 
 	void operator() (Aircraft& aircraft, sf::Time) const
 	{
-		aircraft.accelerate(velocity * aircraft.getMaxSpeed());
+		if (aircraft.getIdentifier() == aircraftID)
+		{
+			aircraft.setVelocity(velocity * aircraft.getMaxSpeed());
+		}
 	}
 
 	sf::Vector2f velocity;
@@ -36,7 +39,9 @@ struct AircraftFireTrigger
 	void operator() (Aircraft& aircraft, sf::Time) const
 	{
 		if (aircraft.getIdentifier() == aircraftID)
+		{
 			aircraft.fire();
+		}
 	}
 
 	int aircraftID;
@@ -52,7 +57,9 @@ struct AircraftMissileTrigger
 	void operator() (Aircraft& aircraft, sf::Time) const
 	{
 		if (aircraft.getIdentifier() == aircraftID)
+		{
 			aircraft.launchMissile();
+		}
 	}
 
 	int aircraftID;
@@ -125,7 +132,7 @@ bool Player::isLocal() const
 
 void Player::disableAllRealtimeActions()
 {
-	for (auto& action : actionProxies_)
+	for (const auto& action : actionProxies_)
 	{
 		sf::Packet packet;
 		packet << static_cast<sf::Int32>(ClientPacketType::PlayerRealtimeChange);
