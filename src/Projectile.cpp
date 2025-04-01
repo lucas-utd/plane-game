@@ -1,8 +1,6 @@
 #include <cmath>
 
-
 #include <SFML/Graphics/RenderTarget.hpp>
-
 
 #include "Projectile.h"
 #include "DataTables.h"
@@ -15,22 +13,23 @@ namespace
 	const std::vector<ProjectileData> Table = initializeProjectileData();
 }
 
-Projectile::Projectile(Type type, const TextureHolder& textures)
-	: Entity(1)
-	, type_(type)
-	, sprite_(textures.get(Table[type].texture), Table[type].textureRect)
-	, targetDirection_(0.f, 0.f)
+Projectile::Projectile(Type type, const TextureHolder &textures)
+	: Entity(1),
+	type_(type),
+	sprite_(textures.get(Table[type].texture),
+	Table[type].textureRect),
+	targetDirection_()
 {
 	centerOrigin(sprite_);
 
 	// Add particle system for missiles
 	if (isGuided())
 	{
-		std::unique_ptr<EmitterNode> smoke{ std::make_unique<EmitterNode>(Particle::Smoke) };
+		std::unique_ptr<EmitterNode> smoke = std::make_unique<EmitterNode>(Particle::Smoke);
 		smoke->setPosition(0.f, getBoundingRect().height / 2.f);
 		attachChild(std::move(smoke));
 
-		std::unique_ptr<EmitterNode> propellant{ std::make_unique<EmitterNode>(Particle::Propellant) };
+		std::unique_ptr<EmitterNode> propellant = std::make_unique<EmitterNode>(Particle::Propellant);
 		propellant->setPosition(0.f, getBoundingRect().height / 2.f);
 		attachChild(std::move(propellant));
 	}
@@ -47,7 +46,7 @@ bool Projectile::isGuided() const
 	return type_ == Missile;
 }
 
-void Projectile::updateCurrent(sf::Time dt, CommandQueue& commands)
+void Projectile::updateCurrent(sf::Time dt, CommandQueue &commands)
 {
 	if (isGuided())
 	{
@@ -64,7 +63,7 @@ void Projectile::updateCurrent(sf::Time dt, CommandQueue& commands)
 	Entity::updateCurrent(dt, commands);
 }
 
-void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+void Projectile::drawCurrent(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(sprite_, states);
 }
@@ -76,7 +75,6 @@ Category Projectile::getCategory() const
 	else
 		return Category::AlliedProjectile;
 }
-
 
 sf::FloatRect Projectile::getBoundingRect() const
 {
@@ -92,4 +90,3 @@ int Projectile::getDamage() const
 {
 	return Table[type_].damage;
 }
-

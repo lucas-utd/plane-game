@@ -348,12 +348,12 @@ void Aircraft::createBullets(SceneNode& node, const TextureHolder& textures) con
 
 void Aircraft::CreateProjectile(SceneNode& node, Projectile::Type type, float xOffset, float yOffset, const TextureHolder& textures) const
 {
-	std::unique_ptr<Projectile> projectile{ std::make_unique<Projectile>(type, textures) };
+	std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>(type, textures);
 
 	sf::Vector2f offset(xOffset * sprite_.getGlobalBounds().width, yOffset * sprite_.getGlobalBounds().height);
 	sf::Vector2f velocity(0, projectile->getMaxSpeed());
 
-	float sign = (isAllied() ? 1.f : -1.f);
+	float sign = (isAllied() ? -1.f : 1.f);
 	projectile->setPosition(getWorldPosition() + offset * sign);
 	projectile->setVelocity(velocity * sign);
 	node.attachChild(std::move(projectile));

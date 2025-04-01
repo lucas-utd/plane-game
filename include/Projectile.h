@@ -17,6 +17,7 @@ public:
 		Missile,
 		TypeCount
 	};
+	
 
 public:
 	Projectile(Type type, const TextureHolder& textures);

@@ -174,7 +174,7 @@ sf::Vector2f unitVector(sf::Vector2f vector)
 {
 	assert(vector != sf::Vector2f(0.f, 0.f) && "Zero-length vector cannot be normalized");
 	float vectorLength = length(vector);
-	if (vectorLength > 0.f)
+	if (vectorLength != 0.f)
 		return vector / vectorLength;
 	else
 		return vector;
