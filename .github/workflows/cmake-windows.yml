@@ -42,7 +42,6 @@ jobs:
     #   uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Set up the cache for VCPKG (Windows)
-      id: cache
       uses: actions/cache@v4
       with:
         path: C:\Users\runneradmin\AppData\Local\vcpkg\archives
@@ -52,9 +51,10 @@ jobs:
 
     - name: Install VCPKG (Windows)
       run: |
-        git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-        C:\vcpkg\bootstrap-vcpkg.bat
-      if: steps.cache.outputs.cache-hit != 'true'
+        if (!(Test-Path "C:\vcpkg")) {
+          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+          C:\vcpkg\bootstrap-vcpkg.bat
+        }
 
     - name: Configure CMake with vcpkg (Windows)
       run: |
