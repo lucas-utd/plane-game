@@ -35,12 +35,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install Dependencies (Ubuntu)
-      if: runner.os == 'Linux'
+    - name: Install Dependencies (Linux)
       run: sudo apt update && sudo apt install -y cmake g++ ninja-build git libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
     - name: Set up the cache for CMake (Linux)
-      if: runner.os == 'Linux'
       uses: actions/cache@v4
       with:
         path: ~/vcpkg
@@ -49,7 +47,6 @@ jobs:
             vcpkg-${{ runner.os }}-
 
     - name: Install VCPKG (Linux)
-      if: runner.os == 'Linux'
       run: |
         # Check if vcpkg is already installed
         if [ ! -d "$HOME/vcpkg" ]; then
@@ -60,7 +57,6 @@ jobs:
         fi
 
     - name: Configure CMake with vcpkg (Linux)
-      if: runner.os == 'Linux'
       run: |
         cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build \
           -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake \

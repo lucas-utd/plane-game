@@ -39,11 +39,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Dependencies (Windows)
-      if: runner.os == 'Windows'
       uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Set up the cache for VCPKG (Windows)
-      if: runner.os == 'Windows'
       uses: actions/cache@v4
       with:
         path: C:\vcpkg
@@ -52,7 +50,6 @@ jobs:
             vcpkg-${{ runner.os }}-
 
     - name: Install VCPKG (Windows)
-      if: runner.os == 'Windows'
       run: |
         if (!(Test-Path "C:\vcpkg")) {
           git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
@@ -60,7 +57,6 @@ jobs:
         }
 
     - name: Configure CMake with vcpkg (Windows)
-      if: runner.os == 'Windows'
       run: |
         cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build `
           -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" `
