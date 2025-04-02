@@ -27,10 +27,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        # vcpkg_root:
-        #   - ubuntu-latest: $HOME/vcpkg
-        #   - windows-latest: C:/vcpkg
+        os: [ ubuntu-latest ]
       fail-fast: true
     runs-on: ${{ matrix.os}}
 
@@ -42,24 +39,11 @@ jobs:
       if: runner.os == 'Linux'
       run: sudo apt update && sudo apt install -y cmake g++ ninja-build git libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
-    - name: Install Dependencies (Windows)
-      if: runner.os == 'Windows'
-      uses: seanmiddleditch/gha-setup-ninja@master
-
     - name: Set up the cache for CMake (Linux)
       if: runner.os == 'Linux'
       uses: actions/cache@v4
       with:
         path: ~/vcpkg
-        key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
-        restore-keys: |
-            vcpkg-${{ runner.os }}-
-
-    - name: Set up the cache for VCPKG (Windows)
-      if: runner.os == 'Windows'
-      uses: actions/cache@v4
-      with:
-        path: C:\vcpkg
         key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
         restore-keys: |
             vcpkg-${{ runner.os }}-
@@ -75,17 +59,6 @@ jobs:
           ./bootstrap-vcpkg.sh
         fi
 
-    - name: Install VCPKG (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        if (!(Test-Path "C:\vcpkg")) {
-          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-          C:\vcpkg\bootstrap-vcpkg.bat
-        }
-
-    # - name: Set VCPKG_ROOT
-    #   run: echo "VCPKG_ROOT=${{ matrix.vcpkg_root }}" >> $GITHUB_ENV
-
     - name: Configure CMake with vcpkg (Linux)
       if: runner.os == 'Linux'
       run: |
@@ -93,15 +66,5 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake \
           -DVCPKG_TARGET_ARCHITECTURE=x64 \
           -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} \
-          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        cmake --build build --config ${{ env.BUILD_CONFIGURATION }}
-
-    - name: Configure CMake with vcpkg (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build `
-          -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" `
-          -DVCPKG_TARGET_ARCHITECTURE=x64 `
-          -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} `
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         cmake --build build --config ${{ env.BUILD_CONFIGURATION }}
