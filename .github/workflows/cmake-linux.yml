@@ -39,22 +39,22 @@ jobs:
       run: sudo apt update && sudo apt install -y cmake g++ ninja-build git libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
     - name: Set up the cache for CMake (Linux)
+      id: cache
       uses: actions/cache@v4
       with:
-        path: ~/vcpkg
-        key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
+        path: ~/.cache/vcpkg
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
         restore-keys: |
             vcpkg-${{ runner.os }}-
 
     - name: Install VCPKG (Linux)
       run: |
         # Check if vcpkg is already installed
-        if [ ! -d "$HOME/vcpkg" ]; then
-          echo "VCPKG not found, installing..."
-          git clone https://github.com/microsoft/vcpkg.git ~/vcpkg
-          cd ~/vcpkg
-          ./bootstrap-vcpkg.sh
-        fi
+        echo "VCPKG not found, installing..."
+        git clone https://github.com/microsoft/vcpkg.git ~/vcpkg
+        cd ~/vcpkg
+        ./bootstrap-vcpkg.sh
+      if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Configure CMake with vcpkg (Linux)
       run: |
