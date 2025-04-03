@@ -58,10 +58,11 @@ jobs:
       # If not, clone and bootstrap it
       # This is a workaround for the cache not being restored
       run: |
-        if (!(Test-Path "C:\vcpkg")) {
-          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-          C:\vcpkg\bootstrap-vcpkg.bat
+        if (Test-Path "C:\vcpkg") {
+          rm -r -force C:\vcpkg
         }
+        git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+        C:\vcpkg\bootstrap-vcpkg.bat
 
     - name: Configure CMake with vcpkg (Windows)
       run: |
