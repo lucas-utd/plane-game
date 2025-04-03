@@ -38,15 +38,26 @@ jobs:
     - name: Install Dependencies (Linux)
       run: sudo apt update && sudo apt install -y cmake g++ ninja-build git libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
-    - name: Set up the cache for CMake (Linux)
+    - name: Set up the cache for vcpkg (Linux)
+      id: cache-vcpkg
+      # Cache vcpkg archives and the vcpkg directory
+      # This is a workaround for the cache not being restored
+      # The cache key is based on the OS and the hash of the vcpkg.json file
+      # This ensures that the cache is invalidated when the vcpkg.json file changes
+      # The restore-keys are used to find the cache if the exact key is not found
+      # This is a workaround for the cache not being restored
+      # The cache is stored in the home directory of the runner
       uses: actions/cache@v4
       with:
-        path: ~/.cache/vcpkg
-        key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+        path: |
+          ~/.cache/vcpkg
+          ~/vcpkg
+        key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
         restore-keys: |
             vcpkg-${{ runner.os }}-
 
     - name: Install VCPKG (Linux)
+      if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       run: |
         # Check if vcpkg is already installed
         if [ ! -d "$HOME/vcpkg" ]; then

@@ -38,18 +38,25 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    # - name: Install Dependencies (Windows)
-    #   uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Set up the cache for VCPKG (Windows)
+      id: cache-vcpkg
+      # Cache vcpkg archives and the vcpkg directory
+      # This is a workaround for the cache not being restored
       uses: actions/cache@v4
       with:
-        path: C:\Users\runneradmin\AppData\Local\vcpkg\archives
+        path: |
+          C:\Users\runneradmin\AppData\Local\vcpkg\archives
+          C:\vcpkg
         key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
         restore-keys: |
             vcpkg-${{ runner.os }}-
 
     - name: Install VCPKG (Windows)
+      if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      # Check if vcpkg is already installed
+      # If not, clone and bootstrap it
+      # This is a workaround for the cache not being restored
       run: |
         if (!(Test-Path "C:\vcpkg")) {
           git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
