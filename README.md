@@ -1,3 +1,6 @@
+![Build](https://github.com/lucas-utd/plane-game/actions/workflows/cmake-linux.yml/badge.svg)
+![Build](https://github.com/lucas-utd/plane-game/actions/workflows/cmake-windows.yml/badge.svg)
+
 # 🚀 Plane Game (C++/SFML)
 
 ## ✈️ Overview  
