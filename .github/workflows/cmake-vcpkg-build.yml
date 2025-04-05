@@ -76,6 +76,10 @@ jobs:
         if (Test-Path "build") {
           Remove-Item -Recurse -Force "build"
         }
+        # Try to clean up the cache the previous runner
+        cd {{ github.workspace }}/vcpkg
+        git clean -fdx
+        git reset --hard HEAD
       shell: pwsh
 
     - name: Set up the cache for vcpkg (Linux)
