@@ -77,7 +77,7 @@ jobs:
           Remove-Item -Recurse -Force "build"
         }
         # Try to clean up the cache the previous runner
-        cd {{ github.workspace }}/vcpkg
+        cd ${{ github.workspace }}/vcpkg
         git clean -fdx
         git reset --hard HEAD
       shell: pwsh
