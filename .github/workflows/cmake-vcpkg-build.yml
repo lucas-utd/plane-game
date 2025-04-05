@@ -58,6 +58,8 @@ jobs:
       run: |
         # Install Ninja
         choco install ninja --yes
+        # Tell CMake to use Ninja and MSVC++ compiler
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
       shell: pwsh
 
     - name: Clean up workspace (Linux)
