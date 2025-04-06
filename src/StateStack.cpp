@@ -93,7 +93,7 @@ void StateStack::applyPendingChanges()
 			break;
 
 		case Action::Clear:
-			for (auto& state : stack_)
+			for (const auto& state : stack_)
 			{
 				state->onDestroy();
 			}

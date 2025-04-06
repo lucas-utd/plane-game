@@ -33,9 +33,9 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 	, world_(*context.window, *context.fonts, *context.sounds, true)
 	, window_(*context.window)
 	, textureHolder_(*context.textures)
-	, connected_(false)
+	, isConnected_(false)
 	, gameServer_(nullptr)
-	, activeState_(true)
+	, isActiveState_(true)
 	, hasFocus_(true)
 	, isHost_(isHost)
 	, isGameStarted_(false)
@@ -79,7 +79,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 
 	if (socket_.connect(ip, ServerPort, sf::seconds(5.f)) == sf::TcpSocket::Done)
 	{
-		connected_ = true;
+		isConnected_ = true;
 	}
 	else
 	{
@@ -95,7 +95,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 
 void MultiplayerGameState::draw()
 {
-	if (connected_)
+	if (isConnected_)
 	{
 		world_.draw();
 
@@ -120,12 +120,12 @@ void MultiplayerGameState::draw()
 
 void MultiplayerGameState::onActivate()
 {
-	activeState_ = true;
+	isActiveState_ = true;
 }
 
 void MultiplayerGameState::onDestroy()
 {
-	if (!isHost_ && connected_)
+	if (!isHost_ && isConnected_)
 	{
 		// Inform server this client is dying
 		sf::Packet packet;
@@ -138,7 +138,7 @@ void MultiplayerGameState::onDestroy()
 bool MultiplayerGameState::update(sf::Time dt)
 {
 	// Connected to server: handle all the network logic
-	if (connected_)
+	if (isConnected_)
 	{
 		world_.update(dt);
 
@@ -175,7 +175,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 		}
 
 		// Only handle the realtime input if the window has focus and the game is active
-		if (activeState_ && hasFocus_)
+		if (isActiveState_ && hasFocus_)
 		{
 			CommandQueue& commands = world_.getCommandQueue();
 			for (auto& player : players_)
@@ -198,7 +198,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 			// Check for timeout with the server
 			if (timeSinceLastPacket_ > clientTimeout_)
 			{
-				connected_ = false;
+				isConnected_ = false;
 
 				failedConnectionText_.setString("Lost connection to the server!");
 				centerOrigin(failedConnectionText_);
@@ -269,7 +269,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 
 void MultiplayerGameState::disableAllRealtimeActions()
 {
-	activeState_ = false;
+	isActiveState_ = false;
 	for (auto& player : players_)
 	{
 		player.second->disableAllRealtimeActions();

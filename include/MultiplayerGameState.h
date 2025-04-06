@@ -40,7 +40,7 @@ private:
 	std::map<int, PlayerPtr> players_;
 	std::vector<sf::Int32> localPlayerIdentifiers_;
 	sf::TcpSocket socket_;
-	bool connected_;
+	bool isConnected_;
 	std::unique_ptr<GameServer> gameServer_;
 	sf::Clock tickClock_;
 
@@ -54,7 +54,7 @@ private:
 	sf::Text failedConnectionText_;
 	sf::Clock failedConnectionClock_;
 
-	bool activeState_;
+	bool isActiveState_;
 	bool hasFocus_;
 	bool isHost_;
 	bool isGameStarted_;

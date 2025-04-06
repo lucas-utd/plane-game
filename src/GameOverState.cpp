@@ -6,7 +6,7 @@
 GameOverState::GameOverState(StateStack& stack, Context context, const std::string& text)
 	: State(stack, context)
 	, gameOverText_()
-	, elapsedTime_()
+	, elapsedTime_(sf::Time::Zero)
 {
 	sf::Font& font = context.fonts->get(Fonts::Main);
 	sf::Vector2f windowSize(context.window->getSize());
@@ -38,7 +38,7 @@ bool GameOverState::update(sf::Time dt)
 	elapsedTime_ += dt;
 	if (elapsedTime_ >= sf::seconds(3))
 	{
-		requestStackPop();
+		requestStateClear();
 		requestStackPush(States::Menu);
 	}
 	return false;

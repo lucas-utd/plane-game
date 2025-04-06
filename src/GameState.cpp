@@ -31,7 +31,7 @@ bool GameState::update(sf::Time dt)
 	else if (world_.hasPlayerReachedEnd())
 	{
 		player_.setMissionStatus(Player::MissionSuccess);
-		requestStackPush(States::GameOver);
+		requestStackPush(States::MissionSuccess);
 	}
 
 	CommandQueue& commands = world_.getCommandQueue();
