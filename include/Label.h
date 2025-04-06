@@ -15,13 +15,13 @@ namespace GUI
 	public:
 		Label(const std::string& text, const FontHolder& fonts);
 
-		virtual bool isSelectable() const;
+		virtual bool isSelectable() const override;
 		void setText(const std::string& text);
 
-		void handleEvent(const sf::Event& event);
+		void handleEvent(const sf::Event& event) override;
 
 	private:
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	private:
 		sf::Text text_;

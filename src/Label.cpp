@@ -17,7 +17,7 @@ namespace GUI
 		return false;
 	}
 
-	void Label::handleEvent(const sf::Event& event)
+	void Label::handleEvent(const sf::Event&)
 	{
 	}
 

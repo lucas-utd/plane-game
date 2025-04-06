@@ -178,7 +178,7 @@ bool MultiplayerGameState::update(sf::Time dt)
 		if (isActiveState_ && hasFocus_)
 		{
 			CommandQueue& commands = world_.getCommandQueue();
-			for (auto& player : players_)
+			for (const auto& player : players_)
 			{
 				player.second->handleRealtimeNetworkInput(commands);
 			}

@@ -50,11 +50,11 @@ void KeyBinding::assignKey(Action action, sf::Keyboard::Key key)
 
 sf::Keyboard::Key KeyBinding::getAssignedKey(Action action) const
 {
-	auto found = std::find_if(keyMap_.rbegin(), keyMap_.rend(), [&](auto& pair) {
+	auto found = std::find_if(keyMap_.cbegin(), keyMap_.cend(), [&](auto& pair) {
 		return pair.second == action;
 		});
 
-	if (found != keyMap_.rend())
+	if (found != keyMap_.cend())
 	{
 		return found->first;
 	}
@@ -64,8 +64,8 @@ sf::Keyboard::Key KeyBinding::getAssignedKey(Action action) const
 
 bool KeyBinding::checkAction(sf::Keyboard::Key key, Action& out) const
 {
-	auto found = keyMap_.find(key);
-	if (found == keyMap_.end())
+	std::map<sf::Keyboard::Key, KeyBinding::Action>::const_iterator found = keyMap_.find(key);
+	if (found == keyMap_.cend())
 	{
 		return false;
 	}
