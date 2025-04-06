@@ -97,20 +97,11 @@ jobs:
         restore-keys: |
             vcpkg-${{ runner.os }}-
 
-    - name: Use Developer Powershell (Windows)
+    - name: Use Developer Command Prompt (cmd)
       if: matrix.os == 'windows-latest'
       run: |
-        # # Install Ninja
-        # choco install ninja --yes
-        # Tell CMake to use Ninja and MSVC++ compiler
-        vsInstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" `
-            -latest -products * `
-            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
-            -property installationPath
-        $devShellModule = "$vsInstallPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-        Import-Module $devShellModule
-        Enter-VsDevShell -VsInstallPath $vsInstallPath -Arch amd64 -SkipAutomaticLocation
-      shell: pwsh
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
+      shell: cmd
 
     - name: Build with CMake Presets
       run: cmake --workflow --preset x64-release

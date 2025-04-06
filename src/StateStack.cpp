@@ -1,5 +1,4 @@
 #include <cassert>
-#include <format>
 #include <sstream>
 
 #include "StateStack.h"
@@ -36,9 +35,9 @@ void StateStack::draw()
 void StateStack::handleEvent(const sf::Event& event)
 {
 	// Iterate from top to bottom, stop as soom as handlEvent() returns false
-	for (const auto& state : stack_)
+	for (auto itr = stack_.rbegin(); itr != stack_.rend(); ++itr)
 	{
-		if (!state->handleEvent(event))
+		if (!(*itr)->handleEvent(event))
 			break;
 	}
 
