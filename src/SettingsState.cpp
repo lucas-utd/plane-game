@@ -39,7 +39,7 @@ void SettingsState::draw()
 	window.draw(guiContainer_);
 }
 
-bool SettingsState::update(sf::Time dt)
+bool SettingsState::update(sf::Time)
 {
 	return true;
 }

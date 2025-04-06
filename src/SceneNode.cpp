@@ -41,7 +41,7 @@ void SceneNode::update(sf::Time dt, CommandQueue& commands)
 	updateChildren(dt, commands);
 }
 
-void SceneNode::updateCurrent(sf::Time dt, CommandQueue&)
+void SceneNode::updateCurrent(sf::Time, CommandQueue&)
 {
 }
 
@@ -63,7 +63,7 @@ void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	drawChildren(target, states);
 }
 
-void SceneNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+void SceneNode::drawCurrent(sf::RenderTarget&, sf::RenderStates) const
 {
 	// Do nothing by default
 }
@@ -76,7 +76,7 @@ void SceneNode::drawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 	}
 }
 
-void SceneNode::drawBoundingRect(sf::RenderTarget& target, sf::RenderStates states) const
+void SceneNode::drawBoundingRect(sf::RenderTarget& target, sf::RenderStates) const
 {
 	sf::FloatRect rect = getBoundingRect();
 

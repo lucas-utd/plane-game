@@ -76,7 +76,7 @@ void MenuState::draw()
 	window.draw(guiContainer_);
 }
 
-bool MenuState::update(sf::Time dt)
+bool MenuState::update(sf::Time)
 {
 	return true;
 }

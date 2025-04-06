@@ -65,7 +65,7 @@ void PauseState::draw()
 	window.draw(guiContainer_);
 }
 
-bool PauseState::update(sf::Time dt)
+bool PauseState::update(sf::Time)
 {
 	return isLetUpdatesThrough_;
 }

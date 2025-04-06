@@ -20,7 +20,9 @@ namespace
 
 std::string toString(sf::Keyboard::Key key)
 {
-	#define BOOK_KEYTOSTRING_CASE(KEY) case sf::Keyboard::KEY: return #KEY;
+#define BOOK_KEYTOSTRING_CASE(KEY) \
+	case sf::Keyboard::KEY:        \
+		return #KEY;
 
 	switch (key)
 	{
@@ -126,24 +128,26 @@ std::string toString(sf::Keyboard::Key key)
 		BOOK_KEYTOSTRING_CASE(F14)
 		BOOK_KEYTOSTRING_CASE(F15)
 		BOOK_KEYTOSTRING_CASE(Pause)
+	case sf::Keyboard::KeyCount:
+		return "";
 	}
 
 	return "";
 }
 
-void centerOrigin(sf::Sprite& sprite)
+void centerOrigin(sf::Sprite &sprite)
 {
 	sf::FloatRect bounds = sprite.getLocalBounds();
 	sprite.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));
 }
 
-void centerOrigin(sf::Text& text)
+void centerOrigin(sf::Text &text)
 {
 	sf::FloatRect bounds = text.getLocalBounds();
 	text.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));
 }
 
-void centerOrigin(Animation& animation)
+void centerOrigin(Animation &animation)
 {
 	sf::FloatRect bounds = animation.getLocalBounds();
 	animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));

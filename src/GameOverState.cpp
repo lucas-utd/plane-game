@@ -44,7 +44,7 @@ bool GameOverState::update(sf::Time dt)
 	return false;
 }
 
-bool GameOverState::handleEvent(const sf::Event& event)
+bool GameOverState::handleEvent(const sf::Event&)
 {
 	// Ignore all events
 	return false;

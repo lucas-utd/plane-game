@@ -50,7 +50,7 @@ void LoadingState::draw()
 	window.draw(progressBar_);
 }
 
-bool LoadingState::update(sf::Time dt)
+bool LoadingState::update(sf::Time)
 {
 	// Update the loading bar from the remote task or finish it
 	if (loadingTask_.isFinished())
@@ -65,7 +65,7 @@ bool LoadingState::update(sf::Time dt)
 	return true;
 }
 
-bool LoadingState::handleEvent(const sf::Event& event)
+bool LoadingState::handleEvent(const sf::Event&)
 {
 	return true;
 }

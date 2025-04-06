@@ -47,17 +47,17 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 	centerOrigin(explosion_);
 
 	fireCommand_.category = Category::SceneAirLayer;
-	fireCommand_.action = [this, &textures](SceneNode& node, sf::Time dt) {
+	fireCommand_.action = [this, &textures](SceneNode& node, sf::Time) {
 		createBullets(node, textures);
 		};
 
 	missileCommand_.category = Category::SceneAirLayer;
-	missileCommand_.action = [this, &textures](SceneNode& node, sf::Time dt) {
+	missileCommand_.action = [this, &textures](SceneNode& node, sf::Time) {
 		CreateProjectile(node, Projectile::Type::Missile, 0.f, 0.5f, textures);
 		};
 
 	dropPickupCommand_.category = Category::SceneAirLayer;
-	dropPickupCommand_.action = [this, &textures](SceneNode& node, sf::Time dt) {
+	dropPickupCommand_.action = [this, &textures](SceneNode& node, sf::Time) {
 		CreatePickup(node, textures);
 		};
 
@@ -235,7 +235,7 @@ void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect effect)
 	Command command;
 	command.category = Category::SoundEffect;
 	command.action = derivedAction<SoundNode>(
-		[effect, worldPosition](SoundNode& node, sf::Time dt) {
+		[effect, worldPosition](SoundNode& node, sf::Time) {
 			node.playSound(effect, worldPosition);
 		});
 	commands.push(command);

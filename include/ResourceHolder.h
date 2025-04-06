@@ -35,7 +35,7 @@ public:
 	const Resource& get(Identifier id) const;
 
 private:
-	void insertResource(Identifier id, std::unique_ptr<Resource> resource);
+	bool insertResource(Identifier id, std::unique_ptr<Resource> resource);
 
 private:
 	std::map<Identifier, std::unique_ptr<Resource>> resourceMap_;

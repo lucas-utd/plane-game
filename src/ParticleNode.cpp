@@ -42,7 +42,7 @@ Category ParticleNode::getCategory() const
 	return Category::ParticleSystem;
 }
 
-void ParticleNode::updateCurrent(sf::Time dt, CommandQueue& commands)
+void ParticleNode::updateCurrent(sf::Time dt, CommandQueue&)
 {
 	// Remove expired particles at beginning
 	while (!particles_.empty() && particles_.front().lifetime <= sf::Time::Zero)

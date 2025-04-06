@@ -147,7 +147,7 @@ void Player::disableAllRealtimeActions()
 void Player::handleRealtimeInput(CommandQueue& commands)
 {
 	// Check if this is a network game and local player or just a single player game
-	if (socket_ && isLocal() || !socket_)
+	if ((socket_ && isLocal()) || !socket_)
 	{
 		// Lookup all actions and push corresponding commands to the queue
 		std::vector<Action> activeActions = keyBinding_->getRealTimeActions();

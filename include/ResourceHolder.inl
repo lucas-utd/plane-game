@@ -44,9 +44,10 @@ const Resource& ResourceHolder<Resource, Identifier>::get(Identifier id) const
 }
 
 template <LoadableResource Resource, MapKey Identifier>
-void ResourceHolder<Resource, Identifier>::insertResource(Identifier id, std::unique_ptr<Resource> resource)
+bool ResourceHolder<Resource, Identifier>::insertResource(Identifier id, std::unique_ptr<Resource> resource)
 {
 	auto inserted = resourceMap_.insert(std::make_pair(id, std::move(resource)));
 	assert(inserted.second && "ResourceHolder::insertResource - ID was already loaded");
+	return inserted.second; // Return the raw pointer to the resource
 }
 
