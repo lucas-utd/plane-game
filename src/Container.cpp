@@ -78,7 +78,7 @@ namespace GUI
 				children_[selectedChild_]->deselect();
 			}
 			children_[index]->select();
-			selectedChild_ = index;
+			selectedChild_ = static_cast<int>(index);
 		}
 	}
 
@@ -109,7 +109,7 @@ namespace GUI
 		int prev = selectedChild_;
 		do
 		{
-			prev = (prev + children_.size() - 1) % children_.size();
+			prev = static_cast<int>((prev + children_.size() - 1) % children_.size());
 		} while (!children_[prev]->isSelectable());
 
 		select(prev);
