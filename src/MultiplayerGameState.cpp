@@ -220,13 +220,13 @@ bool MultiplayerGameState::update(sf::Time dt)
 		GameActions::Action gameAction;
 		while (world_.pollGameAction(gameAction))
 		{
-			sf::Packet packet;
-			packet << static_cast<sf::Int32>(ClientPacketType::GameEvent);
-			packet << static_cast<sf::Int32>(gameAction.type);
-			packet << gameAction.position.x;
-			packet << gameAction.position.y;
+			sf::Packet gameActionPacket;
+			gameActionPacket << static_cast<sf::Int32>(ClientPacketType::GameEvent);
+			gameActionPacket << static_cast<sf::Int32>(gameAction.type);
+			gameActionPacket << gameAction.position.x;
+			gameActionPacket << gameAction.position.y;
 
-			socket_.send(packet);
+			socket_.send(gameActionPacket);
 		}
 
 		// Reguler position update
