@@ -1,8 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
+# This workflow builds the project using CMake and vcpkg.
 name: cmake-vcpkg-build
 
 on:
@@ -97,46 +93,16 @@ jobs:
         restore-keys: |
             vcpkg-${{ runner.os }}-
 
-    - name: Use Developer Command Prompt (cmd)
-      if: matrix.os == 'windows-latest'
-      run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
-      shell: cmd
-
-    - name: Build with CMake Presets
+    - name: Build with CMake Presets (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: cmake --workflow --preset x64-release
 
-
-    # - name: Set up the cache for VCPKG (Windows)
-    #   id: cache-vcpkg
-    #   # Cache vcpkg archives and the vcpkg directory
-    #   # This is a workaround for the cache not being restored
-    #   uses: actions/cache@v4
-    #   with:
-    #     path: |
-    #       C:\Users\runneradmin\AppData\Local\vcpkg
-    #       C:\vcpkg
-    #     key: vcpkg-${{ runner.os }}-${{ hashFiles('**/vcpkg.json') }}
-    #     restore-keys: |
-    #         vcpkg-${{ runner.os }}-
-
-    # - name: Install VCPKG (Windows)
-    #   if: steps.cache-vcpkg.outputs.cache-hit != 'true'
-    #   # Check if vcpkg is already installed
-    #   # If not, clone and bootstrap it
-    #   # This is a workaround for the cache not being restored
-    #   run: |
-    #     if (Test-Path "C:\vcpkg") {
-    #       rm -r -force C:\vcpkg
-    #     }
-    #     git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-    #     C:\vcpkg\bootstrap-vcpkg.bat
-
-    # - name: Configure CMake with vcpkg (Windows)
-    #   run: |
-    #     cmake -S ${{ env.SOLUTION_FILE_PATH }} -B build `
-    #       -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" `
-    #       -DVCPKG_TARGET_ARCHITECTURE=x64 `
-    #       -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} `
-    #       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-    #     cmake --build build --config ${{ env.BUILD_CONFIGURATION }}
+    - name: Build with CMake Presets (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        $vsInstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+        $devShellModule = "$vsInstallPath\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+        Import-Module $devShellModule
+        Enter-VsDevShell -VsInstallPath $vsInstallPath -Arch amd64 -SkipAutomaticLocation
+        cmake --workflow --preset x64-release
+      shell: pwsh
