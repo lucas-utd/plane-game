@@ -12,7 +12,10 @@ This is a cross-platform 2D plane game built with **C++** and **SFML**. The proj
 - Leverages **modern C++** (C++20 concepts, smart pointers, and more)  
 - Implements **software design patterns** for better code organization  
 - Engaging **SFML-powered** gameplay with smooth graphics  
-- **GitHub Workflow** for automatic testing on **Windows** and **Ubuntu**  
+- **GitHub Workflow** for automatic testing on **Windows** and **Ubuntu** 
+- Use **vcpkg** as a submodule to get the same experience on all platforms
+- Use **CMakePresets** to simplify the build process
+- **CMakeUserPresets.json** for user-specific CMake configurations (Optional)
 
 ## 🛠️ Build Instructions  
 
@@ -27,44 +30,19 @@ Ensure you have the following installed:
 
 ### 🔹 Windows (MSVC + vcpkg)  
 ```PowerShell
-git clone https://github.com/lucas-utd/plane-game.git
+# Run those commands in Developer PowerShell for VS 2022
+git clone --recurse-submodules -j8 https://github.com/lucas-utd/plane-game.git
 cd plane-game
 
-# Install dependencies via vcpkg
-if (!(Test-Path "C:\vcpkg")) {
-    git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-    cd c:\vcpkg
-    bootstrap-vcpkg.bat
-}
-
 # Configure and build
-cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
-cmake --build build --config Release
+cmake --workflow --preset x64-release
 ```
 
 ### 🔹 Linux (GCC + vcpkg)  
 ```sh
-git clone https://github.com/lucas-utd/plane-game.git
+git clone --recurse-submodules -j8 https://github.com/lucas-utd/plane-game.git
 cd plane-game
 
-# Install dependencies via vcpkg
-if [ ! -d "~/vcpkg" ]; then
-    echo "VCPKG not found, installing..."
-    git clone https://github.com/microsoft/vcpkg.git ~/vcpkg
-    cd ~/vcpkg
-    ./bootstrap-vcpkg.sh
-fi
-
-# Configure and build
-cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
-cmake --build build --config Release
-```
-
-### 🔹 Use CMake WorkFlow (Optional)
-1. Rename the CMakeUserPresetsTemplate.json file to CMakeUserPresets.json
-2. Add value for VCPKG_ROOT Environment variable in the vc-debug configurePresets ("C:\vcpkg" for Window, "~/vcpkg" for Linux)
-
-```sh
 # Configure and build
 cmake --workflow --preset x64-release
 ```
