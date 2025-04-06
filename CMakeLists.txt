@@ -64,11 +64,13 @@ if (MSVC)
     target_compile_options(PlaneGame PRIVATE
         /W4
         /permissive-
+        /WX
     )
 else()
     target_compile_options(PlaneGame PRIVATE
         -Wall
         -Wextra
+        -Werror
         -pedantic
     )
 endif()
