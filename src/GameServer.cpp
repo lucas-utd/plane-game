@@ -351,12 +351,12 @@ void GameServer::handleIncomingPacket(sf::Packet& packet, RemotePeer& receivingP
 		// To avoid multiple messages spawning multiple pickups, only listen to first peer (host)
 		if (action == GameActions::EnemyExplode && randomInt(3) == 0 && &receivingPeer == peers_[0].get())
 		{
-			sf::Packet packet;
-			packet << static_cast<sf::Int32>(ServerPacketType::SpawnPickup);
-			packet << static_cast<sf::Int32>(Pickup::HealthRefill);
-			packet << x << y;
+			sf::Packet replyPacket;
+			replyPacket << static_cast<sf::Int32>(ServerPacketType::SpawnPickup);
+			replyPacket << static_cast<sf::Int32>(Pickup::HealthRefill);
+			replyPacket << x << y;
 
-			sendToAll(packet);
+			sendToAll(replyPacket);
 		}
 	}
 	break;
