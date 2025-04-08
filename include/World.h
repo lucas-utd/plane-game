@@ -34,7 +34,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked = false);
+	World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool isNetworked = false);
 	void update(sf::Time dt);
 	void draw();
 
@@ -121,7 +121,7 @@ private:
 
 	BloomEffect bloomEffect_;
 
-	bool networkedWorld;
+	bool isNetworkedWorld_;
 	NetworkNode* networkNode_;
 	SpriteNode* finishSprite_;
 };

@@ -29,6 +29,7 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 	, isLaunchingMissile_(false)
 	, isShowExplosion_(true)
 	, isExplosionBegin_(false)
+	, isSpawnedPickup_(false)
 	, isPickupsEnabled_(true)
 	, fireRateLevel_(1)
 	, spreadLevel_(1)
@@ -53,7 +54,7 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 
 	missileCommand_.category = Category::SceneAirLayer;
 	missileCommand_.action = [this, &textures](SceneNode& node, sf::Time) {
-		CreateProjectile(node, Projectile::Type::Missile, 0.f, 0.5f, textures);
+		CreateProjectile(node, Projectile::Missile, 0.f, 0.5f, textures);
 		};
 
 	dropPickupCommand_.category = Category::SceneAirLayer;
@@ -62,13 +63,13 @@ Aircraft::Aircraft(Type type, const TextureHolder& textures, const FontHolder& f
 		};
 
 	// Set up the health display
-	std::unique_ptr<TextNode> healthDisplay{ std::make_unique<TextNode>(fonts, "") };
+	std::unique_ptr<TextNode> healthDisplay = std::make_unique<TextNode>(fonts, "");
 	healthDisplay_ = healthDisplay.get();
 	attachChild(std::move(healthDisplay));
 
 	if (getCategory() == Category::PlayerAircraft)
 	{
-		std::unique_ptr<TextNode> missileDisplay{ std::make_unique<TextNode>(fonts, "") };
+		std::unique_ptr<TextNode> missileDisplay = std::make_unique<TextNode>(fonts, "");
 		missileDisplay->setPosition(0.f, 70.f);
 		missileDisplay_ = missileDisplay.get();
 		attachChild(std::move(missileDisplay));
@@ -238,6 +239,7 @@ void Aircraft::playLocalSound(CommandQueue& commands, SoundEffect effect)
 		[effect, worldPosition](SoundNode& node, sf::Time) {
 			node.playSound(effect, worldPosition);
 		});
+
 	commands.push(command);
 }
 
@@ -363,7 +365,7 @@ void Aircraft::CreatePickup(SceneNode& node, const TextureHolder& textures) cons
 {
 	auto type = static_cast<Pickup::Type>(randomInt(Pickup::TypeCount));
 
-	std::unique_ptr<Pickup> pickup{ std::make_unique<Pickup>(type, textures) };
+	std::unique_ptr<Pickup> pickup = std::make_unique<Pickup>(type, textures);
 	pickup->setPosition(getWorldPosition());
 	pickup->setVelocity(0.f, 1.f);
 	node.attachChild(std::move(pickup));

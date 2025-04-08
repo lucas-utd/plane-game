@@ -9,7 +9,7 @@
 #include "ResourceIdentifiers.h"
 
 
-World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool networked)
+World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sounds, bool isNetworked)
 	: target_(outputTarget)
 	, sceneTexture_()
 	, worldView_(outputTarget.getDefaultView())
@@ -25,7 +25,7 @@ World::World(sf::RenderTarget& outputTarget, FontHolder& fonts, SoundPlayer& sou
 	, playerAircrafts_()
 	, enemySpawnPoints_()
 	, activeEnemies_()
-	, networkedWorld(networked)
+	, isNetworkedWorld_(isNetworked)
 	, networkNode_(nullptr)
 	, finishSprite_(nullptr)
 {
@@ -48,7 +48,7 @@ void World::update(sf::Time dt)
 	// Scroll the world, reset player velocity
 	worldView_.move(0.f, scrollSpeed_ * dt.asSeconds() * scrollSpeedCompensation_);
 
-	for (auto& aircraft : playerAircrafts_)
+	for (const auto& aircraft : playerAircrafts_)
 	{
 		aircraft->setVelocity(0.f, 0.f);
 	}
@@ -195,7 +195,7 @@ void World::adaptPlayerPosition()
 	sf::FloatRect viewBounds{ getViewBounds() };
 	const float borderDistance = 40.f;
 
-	for (auto& aircraft : playerAircrafts_)
+	for (const auto& aircraft : playerAircrafts_)
 	{
 		sf::Vector2f position = aircraft->getPosition();
 		position.x = std::max(position.x, viewBounds.left + borderDistance);
@@ -208,7 +208,7 @@ void World::adaptPlayerPosition()
 
 void World::adaptPlayerVelocity()
 {
-	for (auto& aircraft : playerAircrafts_)
+	for (const auto& aircraft : playerAircrafts_)
 	{
 		sf::Vector2f velocity = aircraft->getVelocity();
 
@@ -355,7 +355,7 @@ void World::buildScene()
 	sceneGraph_.attachChild(std::move(soundNode));
 
 	// Add network node, if necessary
-	if (networkNode_)
+	if (isNetworkedWorld_)
 	{
 		std::unique_ptr<NetworkNode> networkNode = std::make_unique<NetworkNode>();
 		networkNode_ = networkNode.get();
@@ -368,7 +368,7 @@ void World::buildScene()
 
 void World::addEnemies()
 {
-	if (networkedWorld)
+	if (isNetworkedWorld_)
 	{
 		return;
 	}
@@ -407,14 +407,12 @@ void World::sortEnemies()
 {
 	// Sort all enemies according to their y value, such that lower enemies are checked first for spawning
 	std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(), [](SpawnPoint lhs, SpawnPoint rhs)
-		{
-			return lhs.y < rhs.y;
-		});
+			  { return lhs.y < rhs.y; });
 }
 
 void World::addEnemy(Aircraft::Type type, float relX, float relY)
 {
-	SpawnPoint spawn{ type, spawnPosition_.x + relX, spawnPosition_.y - relY };
+	SpawnPoint spawn{type, spawnPosition_.x + relX, spawnPosition_.y - relY};
 	enemySpawnPoints_.push_back(spawn);
 }
 
@@ -429,7 +427,7 @@ void World::spawnEnemies()
 		std::unique_ptr<Aircraft> enemy = std::make_unique<Aircraft>(spawn.type, textures_, fonts_);
 		enemy->setPosition(spawn.x, spawn.y);
 		enemy->setRotation(180.f);
-		if (networkedWorld)
+		if (isNetworkedWorld_)
 		{
 			enemy->disablePickups();
 		}
