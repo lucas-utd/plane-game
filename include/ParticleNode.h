@@ -30,6 +30,6 @@ private:
 	Particle::Type type_;
 
 	mutable sf::VertexArray vertexArray_;
-	mutable bool needsVertexUpdate_;
+	mutable bool isNeedsVertexUpdate_;
 };
 

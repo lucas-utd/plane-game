@@ -18,7 +18,7 @@ ParticleNode::ParticleNode(Particle::Type type, const TextureHolder& textures)
 	, texture_(textures.get(Textures::Particle))
 	, type_(type)
 	, vertexArray_(sf::Quads)
-	, needsVertexUpdate_(true)
+	, isNeedsVertexUpdate_(true)
 {
 }
 
@@ -56,15 +56,15 @@ void ParticleNode::updateCurrent(sf::Time dt, CommandQueue&)
 		particle.lifetime -= dt;
 	}
 
-	needsVertexUpdate_ = true;
+	isNeedsVertexUpdate_ = true;
 }
 
 void ParticleNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (needsVertexUpdate_)
+	if (isNeedsVertexUpdate_)
 	{
 		computeVertices();
-		needsVertexUpdate_ = false;
+		isNeedsVertexUpdate_ = false;
 	}
 
 	// Apply particle texture
@@ -97,12 +97,11 @@ void ParticleNode::computeVertices() const
 		sf::Color color = particle.color;
 
 		float ratio = particle.lifetime.asSeconds() / Table[type_].lifetime.asSeconds();
-		color.a = static_cast<sf::Uint8>(255.f * std::max(ratio, 0.f));
+		color.a = static_cast<sf::Uint8>(255 * std::max(ratio, 0.f));
 
 		addVertex(position.x - half.x, position.y - half.y, 0.f, 0.f, color);
 		addVertex(position.x + half.x, position.y - half.y, size.x, 0.f, color);
 		addVertex(position.x + half.x, position.y + half.y, size.x, size.y, color);
 		addVertex(position.x - half.x, position.y + half.y, 0.f, size.y, color);
 	}
-
 }

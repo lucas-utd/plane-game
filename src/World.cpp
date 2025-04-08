@@ -95,6 +95,8 @@ void World::draw()
 		sceneTexture_.draw(sceneGraph_);
 		sceneTexture_.display();
 		bloomEffect_.apply(sceneTexture_, target_);
+		// target_.setView(worldView_);
+		// target_.draw(sceneGraph_);
 	}
 	else
 	{

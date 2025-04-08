@@ -6,7 +6,7 @@
 
 EmitterNode::EmitterNode(Particle::Type type)
 	: SceneNode()
-	, accumulatedTime_()
+	, accumulatedTime_(sf::Time::Zero)
 	, type_(type)
 	, particleSystem_(nullptr)
 {
