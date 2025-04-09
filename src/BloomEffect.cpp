@@ -34,7 +34,7 @@ void BloomEffect::apply(const sf::RenderTexture& input, sf::RenderTarget& output
 	firstPassTextures_[1].display();
 
 	// Add the blurred bloom effect to the original scene
-	add(input, secondPassTextures_[1], output);
+	add(input, firstPassTextures_[1], output);
 }
 
 void BloomEffect::prepareTextures(sf::Vector2u size)
