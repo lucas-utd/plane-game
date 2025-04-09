@@ -49,7 +49,7 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context context, b
 	playerInvitationText_.setCharacterSize(20);
 	playerInvitationText_.setFillColor(sf::Color::White);
 	playerInvitationText_.setString("Press Enter to spawn player 2");
-	playerInvitationText_.setPosition(100 - playerInvitationText_.getLocalBounds().width, 760 - playerInvitationText_.getLocalBounds().height);
+	playerInvitationText_.setPosition(1000 - playerInvitationText_.getLocalBounds().width, 760 - playerInvitationText_.getLocalBounds().height);
 
 	// We reuse this text for "Attempt to connect" and "Failed to connect" messages
 	failedConnectionText_.setFont(context.fonts->get(Fonts::Main));
@@ -184,11 +184,18 @@ bool MultiplayerGameState::update(sf::Time dt)
 			}
 		}
 
+		// Always handle the network input
+		CommandQueue& commands = world_.getCommandQueue();
+		for (const auto& player : players_)
+		{
+			player.second->handleRealtimeNetworkInput(commands);
+		}
+
 		// Handle messages from the server that may have arrived
 		sf::Packet packet;
 		if (socket_.receive(packet) == sf::Socket::Done)
 		{
-			timeSinceLastPacket_ = sf::Time::Zero;
+			timeSinceLastPacket_ = sf::seconds(0.f);
 			sf::Int32 packetType;
 			packet >> packetType;
 			handlePacket(packetType, packet);
@@ -230,7 +237,6 @@ bool MultiplayerGameState::update(sf::Time dt)
 		}
 
 		// Reguler position update
-
 		if (tickClock_.getElapsedTime() > sf::seconds(1.f / 20.f))
 		{
 			sf::Packet positionUpdatePacket;
@@ -270,9 +276,9 @@ bool MultiplayerGameState::update(sf::Time dt)
 void MultiplayerGameState::disableAllRealtimeActions()
 {
 	isActiveState_ = false;
-	for (auto& player : players_)
+	for (const auto& player : localPlayerIdentifiers_)
 	{
-		player.second->disableAllRealtimeActions();
+		players_[player]->disableAllRealtimeActions();
 	}
 }
 
@@ -282,7 +288,7 @@ bool MultiplayerGameState::handleEvent(const sf::Event& event)
 	CommandQueue& commands = world_.getCommandQueue();
 
 	// Forward event to all players
-	for (auto& player : players_)
+	for (const auto& player : players_)
 	{
 		player.second->handleEvent(event, commands);
 	}
